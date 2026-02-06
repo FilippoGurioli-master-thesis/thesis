@@ -5,6 +5,8 @@
 \usepackage{notes}
 \usepackage{shortcuts}
 \usepackage{acronym}
+\usepackage{fontspec}
+\usepackage{newunicodechar}
 
 \school{\unibo}
 \programme{Master's Degree in Computer Science and Engineering}
@@ -22,6 +24,9 @@
 \acrodef{IoT}{Internet of Thing}
 \acrodef{vm}[VM]{Virtual Machine}
 
+% Definition of unicode chars
+\newunicodechar{⨯}{{\fontfamily{symbolfont}\selectfont ×}}
+
 
 \mainlinespacing{1.241} % line spacing in mainmatter, comment to default (1)
 
@@ -38,14 +43,14 @@ Optional. Max a few lines.
 \end{dedication}
 
 %----------------------------------------------------------------------------------------
-\tableofcontents   
+\tableofcontents
 \listoffigures     % (optional) comment if empty
 \lstlistoflistings % (optional) comment if empty
 %----------------------------------------------------------------------------------------
 
 \mainmatter
 
-\include{example}
+\include{chapters}
 
 %----------------------------------------------------------------------------------------
 % BIBLIOGRAPHY
