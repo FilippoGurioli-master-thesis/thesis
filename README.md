@@ -1,3 +1,3 @@
 # Thesis
 
-My Master's Degree Thesis.
+My Master's Thesis.
