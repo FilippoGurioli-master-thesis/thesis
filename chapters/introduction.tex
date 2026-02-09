@@ -22,12 +22,13 @@ As we attempt to port these characteristics into the digital and physical domain
 
 \section{Problem Statement: Engineering Challanges in Simulation}
 
-Simulation has been widely explored in terms of scalability, but not many experiments have been done regarding high-fidelity. This field brings into play hard constraints that mathematical rigor often does not consider. Physics collisions, gravity and friction are just examples of what a good high-fidelity simulator could add to a cooperative swarm simulation. It is quite intuitive why no one wants this burden: it is a massive implementation that would take years to become really useful. Fortunately, game engines do this work for us; they add physics engines capable of computing the results of physical interactions with rigor. The real problem now becomes only one: bridging these two worlds.
+Simulation has been widely explored in terms of scalability, but not many researches have been done regarding high-fidelity. This field brings into play hard constraints that mathematical rigor often does not consider. Physics collisions, gravity and friction are just examples of what a good high-fidelity simulator could add to a cooperative swarm simulation. Traditional simulators often prioritize the number of agents at the expense of environmental complexity, leading to a `reality gap' that complicates the deployment of algorithms onto physical hardware. Fortunately, game engines do this work for us; they add physics engines capable of computing the result of physical interactions with rigor. The real problem now becomes only one: bridging these two worlds.
+
+The challenge of bridging high-level coordination with game-engine-driven physics is not merely a matter of data transfer, but one of architectural alignment. In particular:
 
 \begin{itemize}
-	\item trovare un elenco dei problemi che derivano dal bridging
+  \item synchronism: collective programming models rely on discrete logical steps whereas game engines operate on a continuous, high-frequency tick (e.g. 60Hz, 60 frames per second).
+  \item Abstraction: collective models treat agents like points in space whereas high-fidelity environment represent them as complex entities with mass, inertia and physical bounds.
+  \item Scalability: the simulator should still be able to compete with other collective programming simulators in terms of nodes represented inside the experiments and their interactions.
 \end{itemize}
 
-\section{Contributions}
-\subsection{A Standardized Automation Workflow for Unity Packages}
-\subsection{A 3D Aggregate Computing Simulator}
