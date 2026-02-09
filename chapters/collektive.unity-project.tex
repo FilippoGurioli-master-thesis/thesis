@@ -1,4 +1,61 @@
 \chapter{Collektive⨯Unity: Designing a 3D Simulator for Collective Systems}
+
+This chapter face the core research project produced for this thesis: a simulator for 3D \ac{CAS}.
+
 \section{Goal}
+
+The project goal is to bridge the Unity game engine with the aggregate computing library named Collektive.
+
+This communication should be bidirectional, achieve high performance and enable huge customization.
+
 \section{Requirements}
+
+Requirements are splitted into separated categories.
+
+\subsection{Business Requirements}
+
+\begin{itemize}
+  \item The project should create a communication channel between the Collektive back-end and the Unity front-end.
+  \item The communication should be bidirectional, i.e. there should be a way in which Unity communicates to Collektive information grasped from the environment and there should be a way in which Collektive answers to that communication.
+  \item Between all the available implementations, the most performance compliant should be used.
+  \item The integration should allow Collektive nodes to perceive Unity's colliders, rigidbodies and spatial triggers as first-class citizens.
+  \item The integration layer should reamin agnostic to the specific \ac{CAS} case study.
+\end{itemize}
+
+\subsection{Domain Requirements}
+
+\subsubsection{Simulator Requirements}
+
+\begin{itemize}
+  \item The simulator should have customizable node sensors
+  \item The simulator should have customizable node actuators
+  \item The simulator should have customizable step duration (i.e. \textit{delta time})
+  \item The simulator should be pausable
+  \item The simulator should have a centered handling of randomization to enable reproducibility
+  \item The simulator should support addition and remotion of nodes in the simulation dynamically
+  \item The simulator should allow nodes to interacts at least with the following unity components:
+    \begin{itemize}
+      \item rigid body
+      \item collider
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Communication Requirements}
+
+\begin{itemize}
+  \item The communication should follow the reactive pattern (i.e. Collektive reacts to Unity's stimuli).
+  \item The data exchanged should be agnostic from the underlying case study.
+  \item Performance should be the driver for choosing the right technology.
+\end{itemize}
+
+\subsection{Functional Requirements}
+
+\subsubsection{User Functional Requirements}
+
+\subsubsection{System Functional Requirements}
+
+\subsection{Non-Functional Requirements}
+
+\subsection{Implementation Requirements}
+
 \section{Architecture}
