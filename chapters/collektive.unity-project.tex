@@ -95,17 +95,6 @@ The integration is designed as a modular bridge between Unity and Collektive, fa
   \item Core Bridge: The central orchestartor that synchronizes these two domains.
 \end{itemize}
 
-\subsection{Collektive Parser}
-
-To enable communication across a network or \ac{IPC} layer, the Collektive \ac{API} requires a robust serialization strategy. Two primary design choices were made to facilitate this:
-
-\begin{itemize}
-  \item the simulation runs on a single machine; thus, Collektive is configured as \monospace{InMemory} to minimize communication latency;
-  \item the generic identifier in Collektive has been reified to an integer to ensure predictable serialization.
-\end{itemize}
-
-The primary challenge lies in the program's input and output, which are both generics. While maintaining these as generics is essential for flexible collective behavior, it complicates data exchange. Rather than the brittle approach of manually replicating data structures and custom serializers on both sides of the bridge, this implementation adopts an \ac{IDL}. By utilizing an \ac{IDL}, the system decouples the data definition from the implementation language, allowing `a program or object written in one language [to] communicate with another program written in an unknown language' \cite{wiki_IDL}.
-
 \begin{diagram}{bridge_architecture}{Diagram showing the bidirectional communication bridge between Unity and Collektive.}
   % Nodes
   \node [block] (unity) {Unity Engine};
@@ -118,4 +107,14 @@ The primary challenge lies in the program's input and output, which are both gen
   \draw [arrow] ([yshift=-2mm]bridge.west) -- node[below] {Act} ([yshift=-2mm]unity.east);
 \end{diagram}
 
+\subsection{Collektive Parser}
+
+To enable communication across a network or \ac{IPC} layer, the Collektive \ac{API} requires a robust serialization strategy. Two primary design choices were made to facilitate this:
+
+\begin{itemize}
+  \item the simulation runs on a single machine; thus, Collektive is configured as \monospace{InMemory} to minimize communication latency;
+  \item the generic identifier in Collektive has been reified to an integer to ensure predictable serialization.
+\end{itemize}
+
+The primary challenge lies in the program's input and output, which are both generics. While maintaining these as generics is essential for flexible collective behavior, it complicates data exchange. Rather than the brittle approach of manually replicating data structures and custom serializers on both sides of the bridge, this implementation adopts an \ac{IDL}. By utilizing an \ac{IDL}, the system decouples the data definition from the implementation language, allowing `a program or object written in one language [to] communicate with another program written in an unknown language' \cite{wiki_IDL}.
 
