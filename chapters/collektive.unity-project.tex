@@ -87,19 +87,35 @@ Requirements are splitted into separated categories.
 
 \section{Architecture}
 
-In order to achieve the goal stated above the architecture exploits different interconnected components. The diagram \ref{fig:bridge_architecture} exposes these components and their interactions.
+The integration is designed as a modular bridge between Unity and Collektive, facilitating the bidirectional flow of information as illustrated in diagram \ref{fig:bridge_architecture}. The bridge architecture is decomposed into three distinct functional components:
 
-\begin{tikzfig}{bridge_architecture}{Architecture of the bidirectional communication bridge between Unity and Collektive.}
+\begin{itemize}
+  \item Unity Parser: Responsible for translating the 3D environemtn's state into a language-agnostic representation.
+  \item Collektive Parser: Serves to map the aggregate logic and state transitions from the Kotlin-based library into actionable commands.
+  \item Core Bridge: The central orchestartor that synchronizes these two domains.
+\end{itemize}
 
-% Nodes
-\node [block] (unity) {Unity Engine};
-\node [block, right of=unity, xshift=2cm] (bridge) {Bridge Layer};
-\node [cloud, right of=bridge, xshift=2cm] (coll) {Collektive};
+\subsection{Collektive Parser}
 
-% Path with labels
-\draw [arrow] (unity.30) -- node[anchor=south] {Sensors} (bridge.150);
-\draw [arrow] (bridge.30) -- node[anchor=south] {Stimuli} (coll.160);
-\draw [arrow] (coll.200) -- node[anchor=north] {Logic} (bridge.330);
-\draw [arrow] (bridge.210) -- node[anchor=north] {Actuators} (unity.330);
+To enable communication across a network or \ac{IPC} layer, the Collektive \ac{API} requires a robust serialization strategy. Two primary design choices were made to facilitate this:
 
-\end{tikzfig}
+\begin{itemize}
+  \item the simulation runs on a single machine; thus, Collektive is configured as \monospace{InMemory} to minimize communication latency;
+  \item the generic identifier in Collektive has been reified to an integer to ensure predictable serialization.
+\end{itemize}
+
+The primary challenge lies in the program's input and output, which are both generics. While maintaining these as generics is essential for flexible collective behavior, it complicates data exchange. Rather than the brittle approach of manually replicating data structures and custom serializers on both sides of the bridge, this implementation adopts an \ac{IDL}. By utilizing an \ac{IDL}, the system decouples the data definition from the implementation language, allowing `a program or object written in one language [to] communicate with another program written in an unknown language' \cite{wiki_IDL}.
+
+\begin{diagram}{bridge_architecture}{Diagram showing the bidirectional communication bridge between Unity and Collektive.}
+  % Nodes
+  \node [block] (unity) {Unity Engine};
+  \node [block, right of=unity, xshift=2cm] (bridge) {Bridge Layer};
+  \node [block, right of=bridge, xshift=2cm] (coll) {Collektive};
+  % Arrows
+  \draw [arrow] ([yshift=2mm]unity.east) -- node[above] {Sense} ([yshift=2mm]bridge.west);
+  \draw [arrow] ([yshift=2mm]bridge.east) -- node[above] {Stimuli} ([yshift=2mm]coll.west);
+  \draw [arrow] ([yshift=-2mm]coll.west) -- node[below] {Logic} ([yshift=-2mm]bridge.east);
+  \draw [arrow] ([yshift=-2mm]bridge.west) -- node[below] {Act} ([yshift=-2mm]unity.east);
+\end{diagram}
+
+
