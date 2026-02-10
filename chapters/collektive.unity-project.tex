@@ -86,3 +86,20 @@ Requirements are splitted into separated categories.
 \end{itemize}
 
 \section{Architecture}
+
+In order to achieve the goal stated above the architecture exploits different interconnected components. The diagram \ref{fig:bridge_architecture} exposes these components and their interactions.
+
+\begin{tikzfig}{bridge_architecture}{Architecture of the bidirectional communication bridge between Unity and Collektive.}
+
+% Nodes
+\node [block] (unity) {Unity Engine};
+\node [block, right of=unity, xshift=2cm] (bridge) {Bridge Layer};
+\node [cloud, right of=bridge, xshift=2cm] (coll) {Collektive};
+
+% Path with labels
+\draw [arrow] (unity.30) -- node[anchor=south] {Sensors} (bridge.150);
+\draw [arrow] (bridge.30) -- node[anchor=south] {Stimuli} (coll.160);
+\draw [arrow] (coll.200) -- node[anchor=north] {Logic} (bridge.330);
+\draw [arrow] (bridge.210) -- node[anchor=north] {Actuators} (unity.330);
+
+\end{tikzfig}

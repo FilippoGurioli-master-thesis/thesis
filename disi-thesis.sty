@@ -8,6 +8,7 @@
 \usepackage[inline]{enumitem}
 \usepackage{setspace}
 \usepackage{fancyhdr}
+\usepackage{environ}
 
 \fancypagestyle{plain}{
     \fancyhf{}
@@ -39,6 +40,29 @@
 \newcommand{\supervisor}[1]{\def\thesupervisor{#1}}
 \newcommand{\session}[1]{\def\thesession{#1}}
 \newcommand{\academicyear}[1]{\def\theacademicyear{#1}}
+\newcommand{\fig}[2]{
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.8\linewidth]{figures/#1}
+        \caption{#2}
+        \label{fig:#1}
+    \end{figure}
+}
+\NewEnviron{tikzfig}[2]{
+    \begin{figure}[htbp]
+        \centering
+        \begin{tikzpicture}[
+            node distance=2.5cm,
+            block/.style={rectangle, draw, fill=blue!10, text width=6em, text centered, rounded corners, minimum height=3em, font=\sffamily\small},
+            cloud/.style={draw, ellipse, fill=red!10, node distance=3cm, minimum height=2em, font=\sffamily\small},
+            arrow/.style={thick, ->, >=stealth}
+        ]
+            \BODY 
+        \end{tikzpicture}
+        \caption{\unexpanded{#2}} % Use \unexpanded here
+        \label{fig:#1}
+    \end{figure}
+}
 
 \newenvironment{abstract}{\chapter*{\centering\abstractname}\addcontentsline{toc}{chapter}{\abstractname}}{} 
 \newenvironment{acknowledgements}{\chapter*{\acknowledgementsname}}{} 
