@@ -16,31 +16,34 @@ Requirements are splitted into separated categories.
 
 \begin{itemize}
   \item The project should create a communication channel between the Collektive back-end and the Unity front-end.
-  \item The communication should be bidirectional, i.e. there should be a way in which Unity communicates to Collektive information grasped from the environment and there should be a way in which Collektive answers to that communication.
-  \item Between all the available implementations, the most performance compliant should be used.
+  \item The project should grasp information from Unity node sensors and share them to the Collektive program.
+  \item The integration must map the output of the Collektive aggregate program to Unity Actuators (e.g., changing position, color, or state of a GameObject).
+  \item The system shall evaluate and implement a low-latency \ac{IPC} or bridge mechanism to minimize overhead between the JVM-based Collektive and the C\#-based Unity environment.
   \item The integration should allow Collektive nodes to perceive Unity's colliders, rigidbodies and spatial triggers as first-class citizens.
   \item The integration layer should reamin agnostic to the specific \ac{CAS} case study.
 \end{itemize}
 
 \subsection{Domain Requirements}
 
-\subsubsection{Simulator Requirements}
+\subsubsection{Simulator Domain}
 
 \begin{itemize}
-  \item The simulator should have customizable node sensors
-  \item The simulator should have customizable node actuators
-  \item The simulator should have customizable step duration (i.e. \textit{delta time})
-  \item The simulator should be pausable
-  \item The simulator should have a centered handling of randomization to enable reproducibility
-  \item The simulator should support addition and remotion of nodes in the simulation dynamically
+  \item The simulator should have customizable node sensors.
+  \item The simulator should have customizable node actuators.
+  \item The simulator should have customizable step duration (i.e. \textit{delta time}).
+  \item The simulator should be able to pause the simulation.
+  \item The simulator should have a centered handling of randomization to enable reproducibility.
+  \item The simulator should support addition and remotion of nodes in the simulation dynamically.
   \item The simulator should allow nodes to interacts at least with the following unity components:
     \begin{itemize}
       \item rigid body
       \item collider
     \end{itemize}
+  \item The simulator should support addition and remotion of neighbors dynamically.
+  \item The simulator should support any kind of nighborhood discovery.
 \end{itemize}
 
-\subsubsection{Communication Requirements}
+\subsubsection{Communication Domain}
 
 \begin{itemize}
   \item The communication should follow the reactive pattern (i.e. Collektive reacts to Unity's stimuli).
@@ -48,14 +51,38 @@ Requirements are splitted into separated categories.
   \item Performance should be the driver for choosing the right technology.
 \end{itemize}
 
+\subsubsection{Research Domain}
+
+\begin{itemize}
+  \item The system should prove the feasability of integrating game engines within \ac{CAS} frameworks.
+\end{itemize}
+
 \subsection{Functional Requirements}
 
 \subsubsection{User Functional Requirements}
 
+\begin{itemize}
+  \item The user should treat a Unity scene as the simulation environment.
+  \item The user should treat the Unity Editor as the simulator.
+  \item The user should be able to add and remove nodes from the environment.
+  \item The user should be able to create neighborhood discovery logic.
+  \item The user should be able to inject any kind of collektive program inside the simulation.
+  \item The user should be able to attach many different sensors and actuators to the same node.
+  \item The user should be able to configure each node independently from the others.
+\end{itemize}
+
 \subsubsection{System Functional Requirements}
+
+\begin{itemize}
+  \item The system should allow users to define custom sensors and acutators without modifying the core integration library.
+  \item The system should allow users to define custom Collektive program without modifying the core integration library.
+\end{itemize}
 
 \subsection{Non-Functional Requirements}
 
-\subsection{Implementation Requirements}
+\begin{itemize}
+  \item The system should maintain stable frame rate ( > 30 FPS) with at least 500 active collektive nodes in a low budget laptop (ryzen 7 5700U, 16GB DDR4, integrated GPU).
+  \item The system should be implemented with the fastest technology found during exploration.
+\end{itemize}
 
 \section{Architecture}
