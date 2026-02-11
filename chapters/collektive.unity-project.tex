@@ -132,7 +132,7 @@ The Core Bridge represents the central link in the system, serving as the high-s
 
 The choice of \ac{FFI} over more traditional \ac{IPC} methods was driven by the need to minimize serialization overhead and context-switching latency. By exposing Collektive’s core logic as a native library, the bridge allows Unity to perform direct memory-to-memory communication. To ensure data consistency across the two environments, the bridge enforces a synchronous execution model. Each simulation `tick' triggers a blocking call: the Unity engine pauses its internal loop while the bridge marshals the data and waits for the Collektive engine to complete its computation round.
 
-The Bridge's role is strictly defined by three mechanical operations: 
+The Bridge's role is strictly defined by three mechanical operations:
 
 \begin{itemize}
   \item Data marshalling: The process of transforming high-level language objects into a language-agnostic binary representation, as defined by the \ac{IDL} schema.
