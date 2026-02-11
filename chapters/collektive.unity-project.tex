@@ -10,13 +10,13 @@ This communication should be bidirectional, achieve high performance and enable 
 
 \section{Requirements}
 
-Requirements are splitted into separated categories.
+Requirements are split into separated categories.
 
 \subsection{Business Requirements}
 
 \begin{itemize}
   \item The project should create a communication channel between the Collektive back-end and the Unity front-end.
-  \item The project should grasp information from Unity node sensors and share them to the Collektive program.
+  \item The project should extract environmental data from Unity node sensors and share them to the Collektive program.
   \item The integration must map the output of the Collektive aggregate program to Unity Actuators (e.g., changing position, color, or state of a GameObject).
   \item The system shall evaluate and implement a low-latency \ac{IPC} or bridge mechanism to minimize overhead between the JVM-based Collektive and the C\#-based Unity environment.
   \item The integration should allow Collektive nodes to perceive Unity's colliders, rigidbodies and spatial triggers as first-class citizens.
@@ -90,7 +90,7 @@ Requirements are splitted into separated categories.
 The integration is designed as a modular bridge between Unity and Collektive, facilitating the bidirectional flow of information as illustrated in diagram \ref{fig:bridge_architecture}. The bridge architecture is decomposed into three distinct functional components:
 
 \begin{itemize}
-  \item Unity Parser: Responsible for translating the 3D environemtn's state into a language-agnostic representation.
+  \item Unity Parser: Responsible for translating the 3D environemnt's state into a language-agnostic representation.
   \item Collektive Parser: Serves to map the aggregate logic and state transitions from the Kotlin-based library into actionable commands.
   \item Core Bridge: The central orchestartor that synchronizes these two domains.
 \end{itemize}
@@ -116,5 +116,28 @@ To enable communication across a network or \ac{IPC} layer, the Collektive \ac{A
   \item the generic identifier in Collektive has been reified to an integer to ensure predictable serialization.
 \end{itemize}
 
-The primary challenge lies in the program's input and output, which are both generics. While maintaining these as generics is essential for flexible collective behavior, it complicates data exchange. Rather than the brittle approach of manually replicating data structures and custom serializers on both sides of the bridge, this implementation adopts an \ac{IDL}. By utilizing an \ac{IDL}, the system decouples the data definition from the implementation language, allowing `a program or object written in one language [to] communicate with another program written in an unknown language' \cite{wiki_IDL}.
+The primary challenge lay in the program's input and output, which are both generics. While maintaining these as generics is essential for flexible collective behavior, it complicates data exchange. Rather than the brittle approach of manually replicating data structures and custom serializers on both sides of the bridge, this implementation adopts an \ac{IDL}. By utilizing an \ac{IDL}, the system decouples the data definition from the implementation language, allowing `a program or object written in one language [to] communicate with another program written in an unknown language' \cite{wiki_IDL}.
 
+\subsection{Unity Parser}
+
+Unity operates on an \ac{ECS} inspired architecture, where the state of any object is defined by its collection of attached components. To bridge this with the aggregate computing domain, the \textit{Unity Parser} is implemented as a specialized component responsible for bidirectional data translation.
+
+At the scene level, a central \textit{Simulation Orchestrator} component serves as the gateway. This entity enhances a standard Unity scene into an active simulation environment by managing the communication channel's lifecycle. It interfaces directly with the \textit{Core Bridge}, utilizing the \ac{IDL} to serialize the environmental state and deserialize incoming commands from the Collektive back-end.
+
+For individual nodes, the parser abstracts Unity’s internal state into the language-agnostic format required by the aggregate program. The parser is responsible for neighborhood discovery. Rather than delegating spatial logic to the back-end, Unity identifies neighbors according to any arbitrary logic (e.g., physical proximity, line-of-sight or topological links) and provides them to the bridge as a collection of identifier pairs. This ensures the system remains agnostic to the specific neighboring criteria, allowing the user to implement any discovery logic within the Unity environment.
+
+\subsection{Core Bridge}
+
+The Core Bridge represents the central link in the system, serving as the high-speed interface between the Unity C\# environment and the Collektive Kotlin/JVM runtime. To satisfy the strict non-functional requirement of maintaining high frame rates with over 500 active nodes, the bridge is implemented as a \ac{FFI} layer.
+
+The choice of \ac{FFI} over more traditional \ac{IPC} methods was driven by the need to minimize serialization overhead and context-switching latency. By exposing Collektive’s core logic as a native library, the bridge allows Unity to perform direct memory-to-memory communication. To ensure data consistency across the two environments, the bridge enforces a synchronous execution model. Each simulation `tick' triggers a blocking call: the Unity engine pauses its internal loop while the bridge marshals the data and waits for the Collektive engine to complete its computation round.
+
+The Bridge's role is strictly defined by three mechanical operations: 
+
+\begin{itemize}
+  \item Data marshalling: The process of transforming high-level language objects into a language-agnostic binary representation, as defined by the \ac{IDL} schema.
+  \item Function invocation: The execution of the foreign logic via the \ac{FFI}, passing pointers to the marshalled data buffers.
+  \item Data unmarshalling: The reconstruction of the binary data into the target language's native types, allowing the receiving environment to process the information.
+\end{itemize}
+
+A comprehensive performance comparison and a detailed evaluation of the trade-offs between \ac{FFI} and Socket-based communication are provided in Section~\ref{sec:comparison} of Chapter~\ref{chap:results}.
