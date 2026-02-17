@@ -15,12 +15,12 @@ Requirements are split into separated categories.
 \subsection{Business Requirements}
 
 \begin{itemize}
-  \item The project should create a communication channel between the Collektive back-end and the Unity front-end.
-  \item The project should extract environmental data from Unity node sensors and share them to the Collektive program.
-  \item The integration must map the output of the Collektive aggregate program to Unity Actuators (e.g., changing position, color, or state of a GameObject).
-  \item The system shall evaluate and implement a low-latency \ac{IPC} or bridge mechanism to minimize overhead between the JVM-based Collektive and the C\#-based Unity environment.
-  \item The integration should allow Collektive nodes to perceive Unity's colliders, rigidbodies and spatial triggers as first-class citizens.
-  \item The integration layer should reamin agnostic to the specific \ac{CAS} case study.
+	\item The project should create a communication channel between the Collektive back-end and the Unity front-end.
+	\item The project should extract environmental data from Unity node sensors and share them to the Collektive program.
+	\item The integration must map the output of the Collektive aggregate program to Unity Actuators (e.g., changing position, color, or state of a GameObject).
+	\item The system shall evaluate and implement a low-latency \ac{IPC} or bridge mechanism to minimize overhead between the JVM-based Collektive and the C\#-based Unity environment.
+	\item The integration should allow Collektive nodes to perceive Unity's colliders, rigidbodies and spatial triggers as first-class citizens.
+	\item The integration layer should reamin agnostic to the specific \ac{CAS} case study.
 \end{itemize}
 
 \subsection{Domain Requirements}
@@ -28,33 +28,33 @@ Requirements are split into separated categories.
 \subsubsection{Simulator Domain}
 
 \begin{itemize}
-  \item The simulator should have customizable node sensors.
-  \item The simulator should have customizable node actuators.
-  \item The simulator should have customizable step duration (i.e. \textit{delta time}).
-  \item The simulator should be able to pause the simulation.
-  \item The simulator should have a centered handling of randomization to enable reproducibility.
-  \item The simulator should support addition and remotion of nodes in the simulation dynamically.
-  \item The simulator should allow nodes to interacts at least with the following unity components:
-    \begin{itemize}
-      \item rigid body
-      \item collider
-    \end{itemize}
-  \item The simulator should support addition and remotion of neighbors dynamically.
-  \item The simulator should support any kind of nighborhood discovery.
+	\item The simulator should have customizable node sensors.
+	\item The simulator should have customizable node actuators.
+	\item The simulator should have customizable step duration (i.e. \textit{delta time}).
+	\item The simulator should be able to pause the simulation.
+	\item The simulator should have a centered handling of randomization to enable reproducibility.
+	\item The simulator should support addition and remotion of nodes in the simulation dynamically.
+	\item The simulator should allow nodes to interacts at least with the following unity components:
+	      \begin{itemize}
+		      \item rigid body
+		      \item collider
+	      \end{itemize}
+	\item The simulator should support addition and remotion of neighbors dynamically.
+	\item The simulator should support any kind of nighborhood discovery.
 \end{itemize}
 
 \subsubsection{Communication Domain}
 
 \begin{itemize}
-  \item The communication should follow the reactive pattern (i.e. Collektive reacts to Unity's stimuli).
-  \item The data exchanged should be agnostic from the underlying case study.
-  \item Performance should be the driver for choosing the right technology.
+	\item The communication should follow the reactive pattern (i.e. Collektive reacts to Unity's stimuli).
+	\item The data exchanged should be agnostic from the underlying case study.
+	\item Performance should be the driver for choosing the right technology.
 \end{itemize}
 
 \subsubsection{Research Domain}
 
 \begin{itemize}
-  \item The system should prove the feasability of integrating game engines within \ac{CAS} frameworks.
+	\item The system should prove the feasability of integrating game engines within \ac{CAS} frameworks.
 \end{itemize}
 
 \subsection{Functional Requirements}
@@ -62,27 +62,27 @@ Requirements are split into separated categories.
 \subsubsection{User Functional Requirements}
 
 \begin{itemize}
-  \item The user should treat a Unity scene as the simulation environment.
-  \item The user should treat the Unity Editor as the simulator.
-  \item The user should be able to add and remove nodes from the environment.
-  \item The user should be able to create neighborhood discovery logic.
-  \item The user should be able to inject any kind of collektive program inside the simulation.
-  \item The user should be able to attach many different sensors and actuators to the same node.
-  \item The user should be able to configure each node independently from the others.
+	\item The user should treat a Unity scene as the simulation environment.
+	\item The user should treat the Unity Editor as the simulator.
+	\item The user should be able to add and remove nodes from the environment.
+	\item The user should be able to create neighborhood discovery logic.
+	\item The user should be able to inject any kind of collektive program inside the simulation.
+	\item The user should be able to attach many different sensors and actuators to the same node.
+	\item The user should be able to configure each node independently from the others.
 \end{itemize}
 
 \subsubsection{System Functional Requirements}
 
 \begin{itemize}
-  \item The system should allow users to define custom sensors and acutators without modifying the core integration library.
-  \item The system should allow users to define custom Collektive program without modifying the core integration library.
+	\item The system should allow users to define custom sensors and acutators without modifying the core integration library.
+	\item The system should allow users to define custom Collektive program without modifying the core integration library.
 \end{itemize}
 
 \subsection{Non-Functional Requirements}
 
 \begin{itemize}
-  \item The system should maintain stable frame rate ( > 30 FPS) with at least 500 active collektive nodes in a low budget laptop (ryzen 7 5700U, 16GB DDR4, integrated GPU).
-  \item The system should be implemented with the fastest technology found during exploration.
+	\item The system should maintain stable frame rate ( > 30 FPS) with at least 500 active collektive nodes in a low budget laptop (ryzen 7 5700U, 16GB DDR4, integrated GPU).
+	\item The system should be implemented with the fastest technology found during exploration.
 \end{itemize}
 
 \section{Architecture} \label{sec:archi}
@@ -90,30 +90,36 @@ Requirements are split into separated categories.
 The integration is designed as a modular bridge between Unity and Collektive, facilitating the bidirectional flow of information as illustrated in diagram \ref{fig:bridge_architecture}. The bridge architecture is decomposed into three distinct functional components:
 
 \begin{itemize}
-  \item Unity Parser: Responsible for translating the 3D environemnt's state into a language-agnostic representation.
-  \item Collektive Parser: Serves to map the aggregate logic and state transitions from the Kotlin-based library into actionable commands.
-  \item Core Bridge: The central orchestartor that synchronizes these two domains.
+	\item Unity Parser: Responsible for translating the 3D environemnt's state into a language-agnostic representation.
+	\item Collektive Parser: Serves to map the aggregate logic and state transitions from the Kotlin-based library into actionable commands.
+	\item Core Bridge: The central orchestartor that synchronizes these two domains.
 \end{itemize}
 
 \begin{diagram}{bridge_architecture}{Diagram showing the bidirectional communication bridge between Unity and Collektive.}
-  % Nodes
-  \node [block] (unity) {Unity Engine};
-  \node [block, right of=unity, xshift=2cm] (bridge) {Bridge Layer};
-  \node [block, right of=bridge, xshift=2cm] (coll) {Collektive};
-  % Arrows
-  \draw [arrow] ([yshift=2mm]unity.east) -- node[above] {Sense} ([yshift=2mm]bridge.west);
-  \draw [arrow] ([yshift=2mm]bridge.east) -- node[above] {Stimuli} ([yshift=2mm]coll.west);
-  \draw [arrow] ([yshift=-2mm]coll.west) -- node[below] {Logic} ([yshift=-2mm]bridge.east);
-  \draw [arrow] ([yshift=-2mm]bridge.west) -- node[below] {Act} ([yshift=-2mm]unity.east);
+	% Nodes
+	\node [block] (unity) {Unity Engine};
+	\node [block, right of=unity, xshift=2cm] (bridge) {Bridge Layer};
+	\node [block, right of=bridge, xshift=2cm] (coll) {Collektive};
+	% Arrows
+	\draw [arrow] ([yshift=2mm]unity.east) -- node[above] {Sense} ([yshift=2mm]bridge.west);
+	\draw [arrow] ([yshift=2mm]bridge.east) -- node[above] {Stimuli} ([yshift=2mm]coll.west);
+	\draw [arrow] ([yshift=-2mm]coll.west) -- node[below] {Logic} ([yshift=-2mm]bridge.east);
+	\draw [arrow] ([yshift=-2mm]bridge.west) -- node[below] {Act} ([yshift=-2mm]unity.east);
 \end{diagram}
+
+\subsection{Integration Strategy: From Application to Package}
+
+Early design iterations focused on developing a standalone simulation environment. However, this approach led to a redundant replication of complex features already native to the Unity Editor, such as spatial partitioning, inspector-based configuration, and asset management.
+
+To resolve this, the architecture was refactored from a monolithic application into a Unity Package. This shift leverages the Unity Editor as the primary configuration interface rather than a mere rendering target. By distributing the backend and bridge as a modular library, the user can utilize Unity’s native tooling to define simulation parameters, modify environment geometry, and inspect node states in real-time. Consequently, the project functions as an extensible framework that transforms a standard Unity project into a specialized \ac{CAS} simulator.
 
 \subsection{Collektive Parser}
 
 To enable communication across a network or \ac{IPC} layer, the Collektive \ac{API} requires a robust serialization strategy. Two primary design choices were made to facilitate this:
 
 \begin{itemize}
-  \item the simulation runs on a single machine; thus, Collektive is configured as \monospace{InMemory} to minimize communication latency;
-  \item the generic identifier in Collektive has been reified to an integer to ensure predictable serialization.
+	\item the simulation runs on a single machine; thus, Collektive is configured as \monospace{InMemory} to minimize communication latency;
+	\item the generic identifier in Collektive has been reified to an integer to ensure predictable serialization.
 \end{itemize}
 
 The primary challenge lay in the program's input and output, which are both generics. While maintaining these as generics is essential for flexible collective behavior, it complicates data exchange. Rather than the brittle approach of manually replicating data structures and custom serializers on both sides of the bridge, this implementation adopts an \ac{IDL}. By utilizing an \ac{IDL}, the system decouples the data definition from the implementation language, allowing `a program or object written in one language [to] communicate with another program written in an unknown language' \cite{wiki_IDL}.
@@ -135,9 +141,9 @@ The choice of \ac{FFI} over more traditional \ac{IPC} methods was driven by the 
 The Bridge's role is strictly defined by three mechanical operations:
 
 \begin{itemize}
-  \item Data marshalling: The process of transforming high-level language objects into a language-agnostic binary representation, as defined by the \ac{IDL} schema.
-  \item Function invocation: The execution of the foreign logic via the \ac{FFI}, passing pointers to the marshalled data buffers.
-  \item Data unmarshalling: The reconstruction of the binary data into the target language's native types, allowing the receiving environment to process the information.
+	\item Data marshalling: The process of transforming high-level language objects into a language-agnostic binary representation, as defined by the \ac{IDL} schema.
+	\item Function invocation: The execution of the foreign logic via the \ac{FFI}, passing pointers to the marshalled data buffers.
+	\item Data unmarshalling: The reconstruction of the binary data into the target language's native types, allowing the receiving environment to process the information.
 \end{itemize}
 
 A comprehensive performance comparison and a detailed evaluation of the trade-offs between \ac{FFI} and Socket-based communication are provided in Chapter~\ref{sec:comparison}.

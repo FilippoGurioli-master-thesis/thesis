@@ -73,10 +73,18 @@ To follow the \ac{SRP} \cite{wiki_SRP} it has been created a helper component th
 \draw [arrow] (network) -- node[right, font=\sffamily\scriptsize] {implements} (mailbox);
 \end
 
-From requirements `the system should allow users to define custom Collektive program without modifying the core integration library'. To honor that requirement the core collektive program (from now on `entrypoint') should be somehow injected into the engine, so that it can remain independent from the actual simulation it has being done. This inversion of control is achieved by injecting a lambda into the Engine constructor, as illustrated in Listing \cref{lst:entrypoint}. This allows the Engine to remain agnostic of the specific collective logic being executed.
+From requirements `the system should allow users to define custom Collektive program without modifying the core integration library'. To honor that requirement the core collektive program (from now on `entrypoint') should be somehow injected into the engine, so that it can remain independent from the actual simulation it has being done. This inversion of control is achieved by injecting a lambda into the Engine constructor, as illustrated in Listing \ref{lst:entrypoint}. This allows the Engine to remain agnostic of the specific collective logic being executed.
 
 \lstinputlisting[float,language=Kotlin,label={lst:entrypoint}]{listings/entrypoint.kt}
 
 The entrypoint serves as the primary abstraction layer for the simulation designer (i.e. the simulator user), providing a restricted scope where collective behaviors are defined without exposure to the underlying engine orchestration. By isolating this logic into a standalone lambda, the framework ensures that the simulation's behavioral rules remain decoupled from the communication and synchronization mechanics of the backend.
+
+It is important to note that the \monospace{SensorData} and \monospace{ActuatorData} types utilized in the entrypoint signature represent the boundary between Collektive and Unity. To maintain strict type-safety across this boundary, these structures are centralized in the \texit{Core Bridge}, acting as the common interface through which simulation state and environmental sensors are exchanged.
+
+\subsection{Core Bridge}
+
+
+
+\subsection{Unity Frontend}
 
 \section{Implementation Details}
