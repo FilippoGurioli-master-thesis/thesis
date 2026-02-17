@@ -109,38 +109,20 @@ On the receiving end, the Collektive backend reads from this shared memory locat
 
 \subsection{Unity Frontend}
 
-The frontend is the last part that connects all point together into the final big picture. Since Unity follows the \ac{ECS} pattern, components must be exploited to achieve the goal of creating a simulation. As mentioned in the architecture, there is a central component that can be seen as the counterpart of the Collektive \monospace{Engine} named \monospace{SimulationManager}.
+The frontend serves as the final integration layer, consolidating the previously described components into a unified simulation environment. To align with Unity’s Component-Based architecture, the system utilizes specialized \monospace{MonoBehaviour} entities to bridge engine-level events with aggregate logic. Central to this coordination is the \monospace{SimulationManager}.
 
-This component is attached exactly to one object in the scene. This component is responsible of configuring unity physics engine (and the unity environment in general) with configuration that enable reproducible simulations. This component is also the proxy for the Collektive \acp{API}, proxing the \monospace{Engine} \acp{API} to the Unity world. It has a reference to a static class that exploits the \monospace{P/Invoke} \cite{msft_pinvoke_2024} mechanism to interact with the Collektive native library. In the diagram \ref{fig:comm_channel} it is exposed the entire communication pipeline from Collektive domain to Unity.
+Acting as the functional counterpart to the Collektive \monospace{Engine}, the \monospace{SimulationManager} is a singleton-like component attached to a unique orchestrator object within the scene. Its role is twofold:
 
-\begin{diagram}{comm_channel}{Communication channel from the Collektive boundary down to the Unity domain.}
-    \node [block, text width=20em] (engine) {
-        {\centering \textbf{<<interface>>} \\ \textbf{Engine} \par}
-        \vspace{-1ex}
-        \rule{\linewidth}{0.4pt} \\
-        \parbox{\linewidth}{
-            \raggedright
-            + addNode(id: Int): Boolean \\
-            + removeNode(id: Int): Boolean \\
-            + addConnection(n1: Int, n2: Int): Boolean \\
-            + removeConnection(n1: Int, n2: Int): Boolean \\
-            + step(id: Int, input: InputData): OutputData
-        }
-    };
+\begin{itemize}
+  \item environment configuration: it initializes the unity physics engine and global simulation parameters to ensure deterministic execution;
+  \item interface bridging: it reflects the high-level facade of Collektive backend \monospace{Engine}. By interfacing with a static service layer that utilizes the \ac{P/Invoke} mechanism \cite{msft_pinvoke_2024}, the manager exposes native library capabilities to the Unity domain.
+\end{itemize}
 
-    \node [block, text width=12em, below of=engine, node distance=3cm] (nativekt) {
-        {\centering \textbf{Native Kotlin APIs} \par}
-    };
+As illustrated in diagram \ref{fig:comm_channel}, this creates a continuous communication pipeline where the \monospace{SimulationManager} orchestrates the flow of data from the Unity scene, through the binary serialization layer, and finally into the native \ac{JVM} execution context.
 
-    \node [block, text width=10em, left of=nativekt, xshift=-4cm, yshift=-2cm] (proto) {
-        {\centering \textbf{Proto Buffers} \\ \textbf{Shared Structures} \par}
-    };
-
-    \node [block, text width=12em, below of=nativekt, node distance=4cm] (nativecs) {
-        {\centering \textbf{P/Invoke Import APIs} \par}
-    };
-
-    \node [block, text width=18em, below of=nativecs, node distance=4cm, xshift=-4cm] (simman) {
+\begin{diagram}{comm_channel}{Communication channel from the Unity domain down to the Collektive boundary.}
+    \coordinate (center) at (0,0);
+    \node [block, text width=18em, left of=center, xshift=-1cm] (simman) {
         {\centering \textbf{SimulationManager} \par}
         \vspace{-1ex}
         \rule{\linewidth}{0.4pt} \\
@@ -154,17 +136,43 @@ This component is attached exactly to one object in the scene. This component is
         }
     };
 
-    \node [block, text width=9em, right of=simman, xshift=5cm] (mb) {
+    \node [block, text width=9em, right of=simman, xshift=6cm] (mb) {
         {\centering \textbf{<<abstract>>} \\ \textbf{MonoBehaviour} \par}
     };
 
-    \draw [arrow] (engine) -- node[right] {Exposes} (nativekt);
-    \draw [arrow] (nativecs) -- node[right] {FFI Call} (nativekt);
-    \draw [arrow] (nativekt) -- node[left] {Return Bytes} (nativecs);
-    \draw [dashed] (proto.north) |- node[above, pos=0.7] {Generates .kt} (nativekt.west);
-    \draw [dashed] (proto.south) |- node[below, pos=0.7] {Generates .cs} (nativecs.west);
-    \draw [arrow] (simman) -- node[right] {P/Invoke} (nativecs);
+    \node [block, text width=12em, below of=center, node distance=4cm] (nativecs) {
+        {\centering \textbf{P/Invoke Import APIs} \par}
+    };
+
+    \node [block, text width=10em, left of=nativecs, xshift=-4.5cm, yshift=-1.75cm] (proto) {
+        {\centering \textbf{Protocol Buffers} \\ \textbf{Shared Structures} \par}
+    };
+
+    \node [block, text width=12em, below of=nativecs, node distance=3.5cm] (nativekt) {
+        {\centering \textbf{Native Kotlin APIs} \par}
+    };
+
+    \node [block, text width=20em, below of=nativekt, node distance=3.5cm] (engine) {
+        {\centering \textbf{<<interface>>} \\ \textbf{Engine} \par}
+        \vspace{-1ex}
+        \rule{\linewidth}{0.4pt} \\
+        \parbox{\linewidth}{
+            \raggedright
+            + addNode(id: Int): Boolean \\
+            + removeNode(id: Int): Boolean \\
+            + addConnection(n1: Int, n2: Int): Boolean \\
+            + removeConnection(n1: Int, n2: Int): Boolean \\
+            + step(id: Int, input: InputData): OutputData
+        }
+    };
+
     \draw [arrow] (mb) -- node[above] {Inherits} (simman);
+    \draw [arrow] (simman.south) -- node[right] {Calls} (nativecs.north);
+    \draw [arrow] ([xshift=2mm]nativecs.south) -- node[right] {FFI Call (Pointer)} ([xshift=2mm]nativekt.north);
+    \draw [arrow] ([xshift=-2mm]nativekt.north) -- node[left] {Return Bytes} ([xshift=-2mm]nativecs.south);
+    \draw [dashed] (proto.north) |- node[above, pos=0.8] {Generates .cs} (nativecs.west);
+    \draw [dashed] (proto.south) |- node[below, pos=0.8] {Generates .kt} (nativekt.west);
+    \draw [arrow] (nativekt) -- node[right] {Invokes} (engine);
 
 \end{diagram}
 
