@@ -4,24 +4,79 @@ This chapters goes into details about what produced in the Collektive⨯Unity pr
 
 \section{Design}
 
-As stated in the architecture section (~\ref{sec:archi}) the communication across the bridge is synchronous. That means that, each time Unity asks something to Collektive, it awaits its answer before restart doing its work. To enforce that architecture choice it has been created a central engine in charge of exposing the main capabilities of a \ac{CAS} simulation. It can be seen as a facade pattern \cite{gamma-1994} in which the engine is the middleware from which the communication passes.
+The design discussion will be divided into the 3 main components identified during the architecture phase: Collketive backend, Core Bridge and Unity frontend.
 
-As shown in ~\cref{fig:engine_facade} diagram this class should have method to handle the whole simulation like \monospace{addNode}, \monospace{addConnection} and \monospace{step}. The \monospace{step} method in particular is the central point that should perform a cycle of the passed node. It is what moves the simulation one step ahead.
+\subsection{Collektive Backend}
+
+As stated in the architecture section (~\ref{sec:archi}) the communication across the bridge is synchronous. That means, each time Unity asks something to Collektive, it awaits its answer before restart doing its work. To enforce that architecture choice it has been created a central engine in charge of exposing the main capabilities of a \ac{CAS} simulation. It can be seen as a facade pattern \cite{gamma-1994} in which the engine is the middleware from which the communication passes.
+
+As shown in ~\cref{fig:engine_facade} diagram this class should have methods to handle the whole simulation like \monospace{addNode}, \monospace{addConnection} and \monospace{step}. The \monospace{step} method in particular is the central point that should perform a cycle of the passed node. It is what moves the simulation one step ahead.
 
 \begin{diagram}{engine_facade}{The Engine Facade.}
-  \node [block, text width=20em] (engine) {
-    {\centering \textbf{<<interface>>} \\ \textbf{Engine} \par}
-    \vspace{-1ex}
-    \rule{\linewidth}{0.4pt} \\
-    \parbox{\linewidth}{
-        \raggedright
-        + addNode(id: Int): Boolean \\
-        + removeNode(id: Int): Boolean \\
-        + addConnection(n1: Int, n2: Int): Boolean \\
-        + removeConnection(n1: Int, n2: Int): Boolean \\
-        + step(id: Int, input: InputData): OutputData
-    }
-  };
+	\node [block, text width=20em] (engine) {
+		{\centering \textbf{<<interface>>} \\ \textbf{Engine} \par}
+		\vspace{-1ex}
+		\rule{\linewidth}{0.4pt} \\
+		\parbox{\linewidth}{
+			\raggedright
+			+ addNode(id: Int): Boolean \\
+			+ removeNode(id: Int): Boolean \\
+			+ addConnection(n1: Int, n2: Int): Boolean \\
+			+ removeConnection(n1: Int, n2: Int): Boolean \\
+			+ step(id: Int, input: InputData): OutputData
+		}
+	};
 \end{diagram}
+
+To follow the \ac{SRP} \cite{wiki_SRP} it has been created a helper component that is in charge of handling neighborhood and network in general for the simulation. This component is split into 2 objects \monospace{Network} and \monospace{NetworkManager}. The former is a stateless representation of the network visible from the perspective of a node (i.e. the implementation of the \monospace{Mailbox} in Collektive) while the latter is a master that knows the entire network and handles communication. The same \monospace{NetworkManager} is injected to each \monospace{Network} that will use it in order to send and receive messages from and to the neighborhood. The \cref{fig:network} diagram shows the network API and their interaction.
+
+\begin{diagram}{network}{How networking is handled in the Collektive backend.}
+
+\node [block, text width=22em] (nm) {
+	{\centering \textbf{<<interface>>} \\ \textbf{NetworkManager} \par}
+	\vspace{-1ex}
+	\rule{\linewidth}{0.4pt} \\
+	\parbox{\linewidth}{
+		\raggedright
+		+ registerNode(id: Int) \\
+		+ unregisterNode(id: Int) \\
+		+ send(id: Int, envelope: OutboundEnvelope<Int>) \\
+		+ receiveMessageFor(id: Int): NeighborsData<Int> \\
+		+ addConnection(from: Int, to: Int): Boolean \\
+		+ removeConnection(from: Int, to: Int): Boolean \\
+	}
+};
+
+\node [block, text width=16em, above of=nm, node distance=5cm] (engine) {
+	{\centering \textbf{Engine} \par}
+};
+
+\node [block, text width=16em, below of=nm, node distance=5cm] (network) {
+	{\centering \textbf{Network} \par}
+};
+
+\node [block, text width=20em, below of=network, node distance=4cm] (mailbox) {
+	{\centering \textbf{<<interface>>} \\ \textbf{Mailbox<ID: Any>} \par}
+	\vspace{-1ex}
+	\rule{\linewidth}{0.4pt} \\
+	\parbox{\linewidth}{
+		\raggedright
+		+ inMemory: Boolean \\
+		+ currentInbound(): NeighborsData<ID> \\
+		+ deliverableFor(outboundMessage: OutboundEnvelope<ID>) \\
+		+ deliverableReceived(message: Message<ID, *>) \\
+	}
+};
+
+\draw [arrow] (network) -- node[right, font=\sffamily\scriptsize] {uses} (nm);
+\draw [arrow] (engine) -- node[right, font=\sffamily\scriptsize] {uses} (nm);
+\draw [arrow] (network) -- node[right, font=\sffamily\scriptsize] {implements} (mailbox);
+\end
+
+From requirements `the system should allow users to define custom Collektive program without modifying the core integration library'. To honor that requirement the core collektive program (from now on `entrypoint') should be somehow injected into the engine, so that it can remain independent from the actual simulation it has being done. This inversion of control is achieved by injecting a lambda into the Engine constructor, as illustrated in Listing \cref{lst:entrypoint}. This allows the Engine to remain agnostic of the specific collective logic being executed.
+
+\lstinputlisting[float,language=Kotlin,label={lst:entrypoint}]{listings/entrypoint.kt}
+
+The entrypoint serves as the primary abstraction layer for the simulation designer (i.e. the simulator user), providing a restricted scope where collective behaviors are defined without exposure to the underlying engine orchestration. By isolating this logic into a standalone lambda, the framework ensures that the simulation's behavioral rules remain decoupled from the communication and synchronization mechanics of the backend.
 
 \section{Implementation Details}
