@@ -83,7 +83,24 @@ It is important to note that the \monospace{SensorData} and \monospace{ActuatorD
 
 \subsection{Core Bridge}
 
+The Core Bridge serves as the critical `glue code' that enables communication between the Collektive and Unity environments. As detailed in Section \ref{sec:archi}, it leverages an \ac{IDL} to marshal domain-specific data structures into low-level byte arrays. These are transferred via a \ac{FFI} to the opposing context, where they are reconstructed into native data structures.
 
+The \ac{IDL} selected for this implementation is Protocol Buffers. While FlatBuffers was initially considered for its superior `zero-copy' performance \cite{google_flatbuffers_2014}, it was ultimately discarded due to compatibility constraints with \ac{KMP} projects.
+
+\paragraph{Protocol Buffers}
+As stated in the official documentation, Protocol Buffers provide a `language-neutral, platform-neutral, extensible mechanism for serializing structured data [...] You define how you want your data to be structured once, then you can use special generated source code to easily write and read your structured data' \cite{google_protobuf_2024}. This system utilizes a specialized compiler (\monospace{protoc}) that processes a \monospace{.proto} definition file to generate the required source code for each target environment (e.g., \monospace{.kt} for Kotlin and \monospace{.cs} for C\#).
+
+The adoption of an \ac{IDL} extends beyond mere serialization efficiency; it enforces the \ac{DRY} principle by providing a single source of truth for data definitions. This decoupling ensures that the data schema remains synchronized across both the \ac{JVM} and the Unity engine, reducing the risk of structural mismatches during the development of complex collective behaviors.
+
+\paragraph{Usage}
+The responsibility for defining shared data structures is delegated to the simulation designer. Users must define the following two core structures within the \ac{IDL} schema:
+
+\begin{itemize}
+  \item \monospace{SensorData}: the information captured by Unity components from the 3D environment to be sent to the Collektive backend;
+  \item \monospace{ActuatorData}: The resultant data produced by the Collektive program, which is returned to Unity to trigger physical or logical actions.
+\end
+
+The decision to delegate these definitions to the user is intentional and ensures the framework remains domain-agnostic. In a monolithic environment, this flexibility would typically be achieved through generics or polymorphism. However, since data must cross a language barrier where native generic types cannot be shared, the \ac{IDL} serves as a functional substitute. By requiring the user to define these structures, the bridge maintains its genericity, allowing it to support any simulation type without requiring changes to the underlying bridge implementation.
 
 \subsection{Unity Frontend}
 

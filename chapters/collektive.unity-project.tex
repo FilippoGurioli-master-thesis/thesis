@@ -87,13 +87,7 @@ Requirements are split into separated categories.
 
 \section{Architecture} \label{sec:archi}
 
-The integration is designed as a modular bridge between Unity and Collektive, facilitating the bidirectional flow of information as illustrated in diagram \ref{fig:bridge_architecture}. The bridge architecture is decomposed into three distinct functional components:
-
-\begin{itemize}
-	\item Unity Parser: Responsible for translating the 3D environemnt's state into a language-agnostic representation.
-	\item Collektive Parser: Serves to map the aggregate logic and state transitions from the Kotlin-based library into actionable commands.
-	\item Core Bridge: The central orchestartor that synchronizes these two domains.
-\end{itemize}
+The integration is designed as a modular bridge between Unity and Collektive, facilitating the bidirectional flow of information as illustrated in diagram \ref{fig:bridge_architecture}. The bridge architecture is decomposed into three distinct functional components: the \textit{Unity Parser}, \textit{Collektive Parser} and \textit{Core Bridge}.
 
 \begin{diagram}{bridge_architecture}{Diagram showing the bidirectional communication bridge between Unity and Collektive.}
 	% Nodes
@@ -109,9 +103,13 @@ The integration is designed as a modular bridge between Unity and Collektive, fa
 
 \subsection{Integration Strategy: From Application to Package}
 
-Early design iterations focused on developing a standalone simulation environment. However, this approach led to a redundant replication of complex features already native to the Unity Editor, such as spatial partitioning, inspector-based configuration, and asset management.
+The architectural design of this bridge was shaped by a shift in how the simulation environment is hosted. Early design iterations focused on developing a standalone simulation application. However, this approach led to a redundant replication of complex features already native to the Unity Editor, such as spatial partitioning, inspector-based configuration, and asset management.
 
 To resolve this, the architecture was refactored from a monolithic application into a Unity Package. This shift leverages the Unity Editor as the primary configuration interface rather than a mere rendering target. By distributing the backend and bridge as a modular library, the user can utilize Unity’s native tooling to define simulation parameters, modify environment geometry, and inspect node states in real-time. Consequently, the project functions as an extensible framework that transforms a standard Unity project into a specialized \ac{CAS} simulator.
+
+\subsection{Component Implementation}
+
+With the package-based strategy established, the internal architecture is divided into specialized layers to handle the translation and execution of aggregate logic.
 
 \subsection{Collektive Parser}
 
@@ -126,7 +124,7 @@ The primary challenge lay in the program's input and output, which are both gene
 
 \subsection{Unity Parser}
 
-Unity operates on an \ac{ECS} inspired architecture, where the state of any object is defined by its collection of attached components. To bridge this with the aggregate computing domain, the \textit{Unity Parser} is implemented as a specialized component responsible for bidirectional data translation.
+While the Collektive Parser handles the logic-side data mapping, the Unity Parser translates these definitions into the engine's entity-based structures. Unity operates on an \ac{ECS} inspired architecture, where the state of any object is defined by its collection of attached components. To bridge this with the aggregate computing domain, the \textit{Unity Parser} is implemented as a specialized component responsible for bidirectional data translation.
 
 At the scene level, a central \textit{Simulation Orchestrator} component serves as the gateway. This entity enhances a standard Unity scene into an active simulation environment by managing the communication channel's lifecycle. It interfaces directly with the \textit{Core Bridge}, utilizing the \ac{IDL} to serialize the environmental state and deserialize incoming commands from the Collektive back-end.
 
