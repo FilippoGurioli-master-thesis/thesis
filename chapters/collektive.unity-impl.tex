@@ -102,6 +102,11 @@ The responsibility for defining shared data structures is delegated to the simul
 
 The decision to delegate these definitions to the user is intentional and ensures the framework remains domain-agnostic. In a monolithic environment, this flexibility would typically be achieved through generics or polymorphism. However, since data must cross a language barrier where native generic types cannot be shared, the \ac{IDL} serves as a functional substitute. By requiring the user to define these structures, the bridge maintains its genericity, allowing it to support any simulation type without requiring changes to the underlying bridge implementation.
 
+\paragraph{Data Transmission}
+Once the user-defined data structures are generated, the framework manages the lifecycle of their transmission across the bridge. When a simulation `tick' occurs, the Unity engine serializes the \monospace{SensorData} into a compact binary format using the Protocol Buffers library. Lastly, the Core Bridge passes a pointer to the underlying byte array through the \ac{FFI} channel.
+
+On the receiving end, the Collektive backend reads from this shared memory location and reconstructs the data into native Kotlin objects. This process ensures that while the user works with high-level, type-safe classes in both C\# and Kotlin, the actual communication remains a memory-bound operation.
+
 \subsection{Unity Frontend}
 
 \section{Implementation Details}

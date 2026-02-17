@@ -18,7 +18,7 @@ Requirements are split into separated categories.
 	\item The project should create a communication channel between the Collektive back-end and the Unity front-end.
 	\item The project should extract environmental data from Unity node sensors and share them to the Collektive program.
 	\item The integration must map the output of the Collektive aggregate program to Unity Actuators (e.g., changing position, color, or state of a GameObject).
-	\item The system shall evaluate and implement a low-latency \ac{IPC} or bridge mechanism to minimize overhead between the JVM-based Collektive and the C\#-based Unity environment.
+	\item The system shall evaluate and implement a low-latency communication or bridge mechanism to minimize overhead between the JVM-based Collektive and the C\#-based Unity environments.
 	\item The integration should allow Collektive nodes to perceive Unity's colliders, rigidbodies and spatial triggers as first-class citizens.
 	\item The integration layer should reamin agnostic to the specific \ac{CAS} case study.
 \end{itemize}
@@ -87,7 +87,7 @@ Requirements are split into separated categories.
 
 \section{Architecture} \label{sec:archi}
 
-The integration is designed as a modular bridge between Unity and Collektive, facilitating the bidirectional flow of information as illustrated in diagram \ref{fig:bridge_architecture}. The bridge architecture is decomposed into three distinct functional components: the \textit{Unity Parser}, \textit{Collektive Parser} and \textit{Core Bridge}.
+The integration is designed as a modular bridge between Unity and Collektive, facilitating the bidirectional flow of information as illustrated in diagram \ref{fig:bridge_architecture}.
 
 \begin{diagram}{bridge_architecture}{Diagram showing the bidirectional communication bridge between Unity and Collektive.}
 	% Nodes
@@ -101,17 +101,25 @@ The integration is designed as a modular bridge between Unity and Collektive, fa
 	\draw [arrow] ([yshift=-2mm]bridge.west) -- node[below] {Act} ([yshift=-2mm]unity.east);
 \end{diagram}
 
-\subsection{Integration Strategy: From Application to Package}
+\subsection{Architecture Rationale}
 
+Before detailing the individual components, it is necessary to outline the core architecture decisions that ensure the system's scalability and flexibility.
+
+\paragraph{From Application to Package}
 The architectural design of this bridge was shaped by a shift in how the simulation environment is hosted. Early design iterations focused on developing a standalone simulation application. However, this approach led to a redundant replication of complex features already native to the Unity Editor, such as spatial partitioning, inspector-based configuration, and asset management.
 
 To resolve this, the architecture was refactored from a monolithic application into a Unity Package. This shift leverages the Unity Editor as the primary configuration interface rather than a mere rendering target. By distributing the backend and bridge as a modular library, the user can utilize Unity’s native tooling to define simulation parameters, modify environment geometry, and inspect node states in real-time. Consequently, the project functions as an extensible framework that transforms a standard Unity project into a specialized \ac{CAS} simulator.
 
+\paragraph{Delegated Neighborhood Discovery}
+A critical architectural decision was the delegation of spatial logic to the Unity environment. In aggregate computing, determining network topology is fundamental. If this logic were handled in the Kotlin backend, every simulation tick would require an $O(n^2)$ complexity check to evaluate node proximity.
+
+By moving discovery to Unity, the system exploits the engine's highly optimized physics engine and pre-baked spatial partitioning (e.g., grids or Octrees). This allows for efficient neighborhood calculations using native features like Colliders or Raycasting, ensuring the backend remains a pure logic engine that receives a pre-calculated adjacency list.
+
 \subsection{Component Implementation}
 
-With the package-based strategy established, the internal architecture is divided into specialized layers to handle the translation and execution of aggregate logic.
+The bridge architecture is decomposed into three distinct functional components that realize the design principles mentioned above.
 
-\subsection{Collektive Parser}
+\subsubsection{Collektive Parser}
 
 To enable communication across a network or \ac{IPC} layer, the Collektive \ac{API} requires a robust serialization strategy. Two primary design choices were made to facilitate this:
 
@@ -122,7 +130,7 @@ To enable communication across a network or \ac{IPC} layer, the Collektive \ac{A
 
 The primary challenge lay in the program's input and output, which are both generics. While maintaining these as generics is essential for flexible collective behavior, it complicates data exchange. Rather than the brittle approach of manually replicating data structures and custom serializers on both sides of the bridge, this implementation adopts an \ac{IDL}. By utilizing an \ac{IDL}, the system decouples the data definition from the implementation language, allowing `a program or object written in one language [to] communicate with another program written in an unknown language' \cite{wiki_IDL}.
 
-\subsection{Unity Parser}
+\subsubsection{Unity Parser}
 
 While the Collektive Parser handles the logic-side data mapping, the Unity Parser translates these definitions into the engine's entity-based structures. Unity operates on an \ac{ECS} inspired architecture, where the state of any object is defined by its collection of attached components. To bridge this with the aggregate computing domain, the \textit{Unity Parser} is implemented as a specialized component responsible for bidirectional data translation.
 
@@ -130,7 +138,7 @@ At the scene level, a central \textit{Simulation Orchestrator} component serves 
 
 For individual nodes, the parser abstracts Unity’s internal state into the language-agnostic format required by the aggregate program. The parser is responsible for neighborhood discovery. Rather than delegating spatial logic to the back-end, Unity identifies neighbors according to any arbitrary logic (e.g., physical proximity, line-of-sight or topological links) and provides them to the bridge as a collection of identifier pairs. This ensures the system remains agnostic to the specific neighboring criteria, allowing the user to implement any discovery logic within the Unity environment.
 
-\subsection{Core Bridge}
+\subsubsection{Core Bridge}
 
 The Core Bridge represents the central link in the system, serving as the high-speed interface between the Unity C\# environment and the Collektive Kotlin/JVM runtime. To satisfy the strict non-functional requirement of maintaining high frame rates with over 500 active nodes, the bridge is implemented as a \ac{FFI} layer.
 
