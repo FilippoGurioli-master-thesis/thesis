@@ -28,7 +28,7 @@ As shown in ~\cref{fig:engine_facade} diagram this class should have methods to 
 	};
 \end{diagram}
 
-To follow the \ac{SRP} \cite{wiki_SRP} it has been created a helper component that is in charge of handling neighborhood and network in general for the simulation. This component is split into 2 objects \monospace{Network} and \monospace{NetworkManager}. The former is a stateless representation of the network visible from the perspective of a node (i.e. the implementation of the \monospace{Mailbox} in Collektive) while the latter is a master that knows the entire network and handles communication. The same \monospace{NetworkManager} is injected to each \monospace{Network} that will use it in order to send and receive messages from and to the neighborhood. The \cref{fig:network} diagram shows the network API and their interaction.
+To follow the \ac{SRP} \cite{wiki_SRP} it has been created a helper component that is in charge of handling neighborhood and network in general for the simulation. This component is split into 2 objects \monospace{Network} and \monospace{NetworkManager}. The former is a stateless representation of the network visible from the perspective of a node (i.e. the implementation of the \monospace{Mailbox} in Collektive) while the latter is a master that knows the entire network and handles communication. The same \monospace{NetworkManager} is injected to each \monospace{Network} that will use it in order to send and receive messages from and to the neighborhood. The \cref{fig:network} diagram shows the network \ac{API} and their interaction.
 
 \begin{diagram}{network}{How networking is handled in the Collektive backend.}
 
@@ -71,7 +71,7 @@ To follow the \ac{SRP} \cite{wiki_SRP} it has been created a helper component th
 \draw [arrow] (network) -- node[right, font=\sffamily\scriptsize] {uses} (nm);
 \draw [arrow] (engine) -- node[right, font=\sffamily\scriptsize] {uses} (nm);
 \draw [arrow] (network) -- node[right, font=\sffamily\scriptsize] {implements} (mailbox);
-\end
+\end{diagram}
 
 From requirements `the system should allow users to define custom Collektive program without modifying the core integration library'. To honor that requirement the core collektive program (from now on `entrypoint') should be somehow injected into the engine, so that it can remain independent from the actual simulation it has being done. This inversion of control is achieved by injecting a lambda into the Engine constructor, as illustrated in Listing \ref{lst:entrypoint}. This allows the Engine to remain agnostic of the specific collective logic being executed.
 
@@ -108,5 +108,64 @@ Once the user-defined data structures are generated, the framework manages the l
 On the receiving end, the Collektive backend reads from this shared memory location and reconstructs the data into native Kotlin objects. This process ensures that while the user works with high-level, type-safe classes in both C\# and Kotlin, the actual communication remains a memory-bound operation.
 
 \subsection{Unity Frontend}
+
+The frontend is the last part that connects all point together into the final big picture. Since Unity follows the \ac{ECS} pattern, components must be exploited to achieve the goal of creating a simulation. As mentioned in the architecture, there is a central component that can be seen as the counterpart of the Collektive \monospace{Engine} named \monospace{SimulationManager}.
+
+This component is attached exactly to one object in the scene. This component is responsible of configuring unity physics engine (and the unity environment in general) with configuration that enable reproducible simulations. This component is also the proxy for the Collektive \acp{API}, proxing the \monospace{Engine} \acp{API} to the Unity world. It has a reference to a static class that exploits the \monospace{P/Invoke} \cite{msft_pinvoke_2024} mechanism to interact with the Collektive native library. In the diagram \ref{fig:comm_channel} it is exposed the entire communication pipeline from Collektive domain to Unity.
+
+\begin{diagram}{comm_channel}{Communication channel from the Collektive boundary down to the Unity domain.}
+    \node [block, text width=20em] (engine) {
+        {\centering \textbf{<<interface>>} \\ \textbf{Engine} \par}
+        \vspace{-1ex}
+        \rule{\linewidth}{0.4pt} \\
+        \parbox{\linewidth}{
+            \raggedright
+            + addNode(id: Int): Boolean \\
+            + removeNode(id: Int): Boolean \\
+            + addConnection(n1: Int, n2: Int): Boolean \\
+            + removeConnection(n1: Int, n2: Int): Boolean \\
+            + step(id: Int, input: InputData): OutputData
+        }
+    };
+
+    \node [block, text width=12em, below of=engine, node distance=3cm] (nativekt) {
+        {\centering \textbf{Native Kotlin APIs} \par}
+    };
+
+    \node [block, text width=10em, left of=nativekt, xshift=-4cm, yshift=-2cm] (proto) {
+        {\centering \textbf{Proto Buffers} \\ \textbf{Shared Structures} \par}
+    };
+
+    \node [block, text width=12em, below of=nativekt, node distance=4cm] (nativecs) {
+        {\centering \textbf{P/Invoke Import APIs} \par}
+    };
+
+    \node [block, text width=18em, below of=nativecs, node distance=4cm, xshift=-4cm] (simman) {
+        {\centering \textbf{SimulationManager} \par}
+        \vspace{-1ex}
+        \rule{\linewidth}{0.4pt} \\
+        \parbox{\linewidth}{
+            \raggedright
+            + addNode(id: Int): Boolean \\
+            + removeNode(id: Int): Boolean \\
+            + addConnection(n1: Int, n2: Int): Boolean \\
+            + removeConnection(n1: Int, n2: Int): Boolean \\
+            + step(id: Int, input: InputData): OutputData
+        }
+    };
+
+    \node [block, text width=9em, right of=simman, xshift=5cm] (mb) {
+        {\centering \textbf{<<abstract>>} \\ \textbf{MonoBehaviour} \par}
+    };
+
+    \draw [arrow] (engine) -- node[right] {Exposes} (nativekt);
+    \draw [arrow] (nativecs) -- node[right] {FFI Call} (nativekt);
+    \draw [arrow] (nativekt) -- node[left] {Return Bytes} (nativecs);
+    \draw [dashed] (proto.north) |- node[above, pos=0.7] {Generates .kt} (nativekt.west);
+    \draw [dashed] (proto.south) |- node[below, pos=0.7] {Generates .cs} (nativecs.west);
+    \draw [arrow] (simman) -- node[right] {P/Invoke} (nativecs);
+    \draw [arrow] (mb) -- node[above] {Inherits} (simman);
+
+\end{diagram}
 
 \section{Implementation Details}
