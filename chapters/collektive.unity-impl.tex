@@ -32,45 +32,45 @@ To follow the \ac{SRP} \cite{wiki_SRP} it has been created a helper component th
 
 \begin{diagram}{network}{How networking is handled in the Collektive backend.}
 
-\node [block, text width=22em] (nm) {
-	{\centering \textbf{<<interface>>} \\ \textbf{NetworkManager} \par}
-	\vspace{-1ex}
-	\rule{\linewidth}{0.4pt} \\
-	\parbox{\linewidth}{
-		\raggedright
-		+ registerNode(id: Int) \\
-		+ unregisterNode(id: Int) \\
-		+ send(id: Int, envelope: OutboundEnvelope<Int>) \\
-		+ receiveMessageFor(id: Int): NeighborsData<Int> \\
-		+ addConnection(from: Int, to: Int): Boolean \\
-		+ removeConnection(from: Int, to: Int): Boolean \\
-	}
-};
+	\node [block, text width=22em] (nm) {
+		{\centering \textbf{<<interface>>} \\ \textbf{NetworkManager} \par}
+		\vspace{-1ex}
+		\rule{\linewidth}{0.4pt} \\
+		\parbox{\linewidth}{
+			\raggedright
+			+ registerNode(id: Int) \\
+			+ unregisterNode(id: Int) \\
+			+ send(id: Int, envelope: OutboundEnvelope<Int>) \\
+			+ receiveMessageFor(id: Int): NeighborsData<Int> \\
+			+ addConnection(from: Int, to: Int): Boolean \\
+			+ removeConnection(from: Int, to: Int): Boolean \\
+		}
+	};
 
-\node [block, text width=16em, above of=nm, node distance=5cm] (engine) {
-	{\centering \textbf{Engine} \par}
-};
+	\node [block, text width=16em, above of=nm, node distance=5cm] (engine) {
+		{\centering \textbf{Engine} \par}
+	};
 
-\node [block, text width=16em, below of=nm, node distance=5cm] (network) {
-	{\centering \textbf{Network} \par}
-};
+	\node [block, text width=16em, below of=nm, node distance=5cm] (network) {
+		{\centering \textbf{Network} \par}
+	};
 
-\node [block, text width=20em, below of=network, node distance=4cm] (mailbox) {
-	{\centering \textbf{<<interface>>} \\ \textbf{Mailbox<ID: Any>} \par}
-	\vspace{-1ex}
-	\rule{\linewidth}{0.4pt} \\
-	\parbox{\linewidth}{
-		\raggedright
-		+ inMemory: Boolean \\
-		+ currentInbound(): NeighborsData<ID> \\
-		+ deliverableFor(outboundMessage: OutboundEnvelope<ID>) \\
-		+ deliverableReceived(message: Message<ID, *>) \\
-	}
-};
+	\node [block, text width=20em, below of=network, node distance=4cm] (mailbox) {
+		{\centering \textbf{<<interface>>} \\ \textbf{Mailbox<ID: Any>} \par}
+		\vspace{-1ex}
+		\rule{\linewidth}{0.4pt} \\
+		\parbox{\linewidth}{
+			\raggedright
+			+ inMemory: Boolean \\
+			+ currentInbound(): NeighborsData<ID> \\
+			+ deliverableFor(outboundMessage: OutboundEnvelope<ID>) \\
+			+ deliverableReceived(message: Message<ID, *>) \\
+		}
+	};
 
-\draw [arrow] (network) -- node[right, font=\sffamily\scriptsize] {uses} (nm);
-\draw [arrow] (engine) -- node[right, font=\sffamily\scriptsize] {uses} (nm);
-\draw [arrow] (network) -- node[right, font=\sffamily\scriptsize] {implements} (mailbox);
+	\draw [arrow] (network) -- node[right, font=\sffamily\scriptsize] {uses} (nm);
+	\draw [arrow] (engine) -- node[right, font=\sffamily\scriptsize] {uses} (nm);
+	\draw [arrow] (network) -- node[right, font=\sffamily\scriptsize] {implements} (mailbox);
 \end{diagram}
 
 From requirements `the system should allow users to define custom Collektive program without modifying the core integration library'. To honor that requirement the core collektive program (from now on `entrypoint') should be somehow injected into the engine, so that it can remain independent from the actual simulation it has being done. This inversion of control is achieved by injecting a lambda into the Engine constructor, as illustrated in Listing \ref{lst:entrypoint}. This allows the Engine to remain agnostic of the specific collective logic being executed.
@@ -79,7 +79,7 @@ From requirements `the system should allow users to define custom Collektive pro
 
 The entrypoint serves as the primary abstraction layer for the simulation designer (i.e. the simulator user), providing a restricted scope where collective behaviors are defined without exposure to the underlying engine orchestration. By isolating this logic into a standalone lambda, the framework ensures that the simulation's behavioral rules remain decoupled from the communication and synchronization mechanics of the backend.
 
-It is important to note that the \monospace{SensorData} and \monospace{ActuatorData} types utilized in the entrypoint signature represent the boundary between Collektive and Unity. To maintain strict type-safety across this boundary, these structures are centralized in the \texit{Core Bridge}, acting as the common interface through which simulation state and environmental sensors are exchanged.
+It is important to note that the \monospace{SensorData} and \monospace{ActuatorData} types utilized in the entrypoint signature represent the boundary between Collektive and Unity. To maintain strict type-safety across this boundary, these structures are centralized in the \textit{Core Bridge}, acting as the common interface through which simulation state and environmental sensors are exchanged.
 
 \subsection{Core Bridge}
 
@@ -96,9 +96,9 @@ The adoption of an \ac{IDL} extends beyond mere serialization efficiency; it enf
 The responsibility for defining shared data structures is delegated to the simulation designer. Users must define the following two core structures within the \ac{IDL} schema:
 
 \begin{itemize}
-  \item \monospace{SensorData}: the information captured by Unity components from the 3D environment to be sent to the Collektive backend;
-  \item \monospace{ActuatorData}: The resultant data produced by the Collektive program, which is returned to Unity to trigger physical or logical actions.
-\end
+	\item \monospace{SensorData}: the information captured by Unity components from the 3D environment to be sent to the Collektive backend;
+	\item \monospace{ActuatorData}: The resultant data produced by the Collektive program, which is returned to Unity to trigger physical or logical actions.
+\end{itemize}
 
 The decision to delegate these definitions to the user is intentional and ensures the framework remains domain-agnostic. In a monolithic environment, this flexibility would typically be achieved through generics or polymorphism. However, since data must cross a language barrier where native generic types cannot be shared, the \ac{IDL} serves as a functional substitute. By requiring the user to define these structures, the bridge maintains its genericity, allowing it to support any simulation type without requiring changes to the underlying bridge implementation.
 
@@ -114,65 +114,65 @@ The frontend serves as the final integration layer, consolidating the previously
 Acting as the functional counterpart to the Collektive \monospace{Engine}, the \monospace{SimulationManager} is a singleton-like component attached to a unique orchestrator object within the scene. Its role is twofold:
 
 \begin{itemize}
-  \item environment configuration: it initializes the unity physics engine and global simulation parameters to ensure deterministic execution;
-  \item interface bridging: it reflects the high-level facade of Collektive backend \monospace{Engine}. By interfacing with a static service layer that utilizes the \ac{P/Invoke} mechanism \cite{msft_pinvoke_2024}, the manager exposes native library capabilities to the Unity domain.
+	\item environment configuration: it initializes the unity physics engine and global simulation parameters to ensure deterministic execution;
+	\item interface bridging: it reflects the high-level facade of Collektive backend \monospace{Engine}. By interfacing with a static service layer that utilizes the \ac{P/Invoke} mechanism \cite{msft_pinvoke_2024}, the manager exposes native library capabilities to the Unity domain.
 \end{itemize}
 
 As illustrated in diagram \ref{fig:comm_channel}, this creates a continuous communication pipeline where the \monospace{SimulationManager} orchestrates the flow of data from the Unity scene, through the binary serialization layer, and finally into the native \ac{JVM} execution context.
 
 \begin{diagram}{comm_channel}{Communication channel from the Unity domain down to the Collektive boundary.}
-    \coordinate (center) at (0,0);
-    \node [block, text width=18em, left of=center, xshift=-1cm] (simman) {
-        {\centering \textbf{SimulationManager} \par}
-        \vspace{-1ex}
-        \rule{\linewidth}{0.4pt} \\
-        \parbox{\linewidth}{
-            \raggedright
-            + addNode(id: Int): Boolean \\
-            + removeNode(id: Int): Boolean \\
-            + addConnection(n1: Int, n2: Int): Boolean \\
-            + removeConnection(n1: Int, n2: Int): Boolean \\
-            + step(id: Int, input: InputData): OutputData
-        }
-    };
+	\coordinate (center) at (0,0);
+	\node [block, text width=18em, left of=center, xshift=-1cm] (simman) {
+		{\centering \textbf{SimulationManager} \par}
+		\vspace{-1ex}
+		\rule{\linewidth}{0.4pt} \\
+		\parbox{\linewidth}{
+			\raggedright
+			+ addNode(id: Int): Boolean \\
+			+ removeNode(id: Int): Boolean \\
+			+ addConnection(n1: Int, n2: Int): Boolean \\
+			+ removeConnection(n1: Int, n2: Int): Boolean \\
+			+ step(id: Int, input: InputData): OutputData
+		}
+	};
 
-    \node [block, text width=9em, right of=simman, xshift=6cm] (mb) {
-        {\centering \textbf{<<abstract>>} \\ \textbf{MonoBehaviour} \par}
-    };
+	\node [block, text width=9em, right of=simman, xshift=6cm] (mb) {
+		{\centering \textbf{<<abstract>>} \\ \textbf{MonoBehaviour} \par}
+	};
 
-    \node [block, text width=12em, below of=center, node distance=4cm] (nativecs) {
-        {\centering \textbf{P/Invoke Import APIs} \par}
-    };
+	\node [block, text width=12em, below of=center, node distance=4cm] (nativecs) {
+		{\centering \textbf{P/Invoke Import APIs} \par}
+	};
 
-    \node [block, text width=10em, left of=nativecs, xshift=-4.5cm, yshift=-1.75cm] (proto) {
-        {\centering \textbf{Protocol Buffers} \\ \textbf{Shared Structures} \par}
-    };
+	\node [block, text width=10em, left of=nativecs, xshift=-4.5cm, yshift=-1.75cm] (proto) {
+		{\centering \textbf{Protocol Buffers} \\ \textbf{Shared Structures} \par}
+	};
 
-    \node [block, text width=12em, below of=nativecs, node distance=3.5cm] (nativekt) {
-        {\centering \textbf{Native Kotlin APIs} \par}
-    };
+	\node [block, text width=12em, below of=nativecs, node distance=3.5cm] (nativekt) {
+		{\centering \textbf{Native Kotlin APIs} \par}
+	};
 
-    \node [block, text width=20em, below of=nativekt, node distance=3.5cm] (engine) {
-        {\centering \textbf{<<interface>>} \\ \textbf{Engine} \par}
-        \vspace{-1ex}
-        \rule{\linewidth}{0.4pt} \\
-        \parbox{\linewidth}{
-            \raggedright
-            + addNode(id: Int): Boolean \\
-            + removeNode(id: Int): Boolean \\
-            + addConnection(n1: Int, n2: Int): Boolean \\
-            + removeConnection(n1: Int, n2: Int): Boolean \\
-            + step(id: Int, input: InputData): OutputData
-        }
-    };
+	\node [block, text width=20em, below of=nativekt, node distance=3.5cm] (engine) {
+		{\centering \textbf{<<interface>>} \\ \textbf{Engine} \par}
+		\vspace{-1ex}
+		\rule{\linewidth}{0.4pt} \\
+		\parbox{\linewidth}{
+			\raggedright
+			+ addNode(id: Int): Boolean \\
+			+ removeNode(id: Int): Boolean \\
+			+ addConnection(n1: Int, n2: Int): Boolean \\
+			+ removeConnection(n1: Int, n2: Int): Boolean \\
+			+ step(id: Int, input: InputData): OutputData
+		}
+	};
 
-    \draw [arrow] (mb) -- node[above] {Inherits} (simman);
-    \draw [arrow] (simman.south) -- node[right] {Calls} (nativecs.north);
-    \draw [arrow] ([xshift=2mm]nativecs.south) -- node[right] {FFI Call (Pointer)} ([xshift=2mm]nativekt.north);
-    \draw [arrow] ([xshift=-2mm]nativekt.north) -- node[left] {Return Bytes} ([xshift=-2mm]nativecs.south);
-    \draw [dashed] (proto.north) |- node[above, pos=0.8] {Generates .cs} (nativecs.west);
-    \draw [dashed] (proto.south) |- node[below, pos=0.8] {Generates .kt} (nativekt.west);
-    \draw [arrow] (nativekt) -- node[right] {Invokes} (engine);
+	\draw [arrow] (mb) -- node[above] {Inherits} (simman);
+	\draw [arrow] (simman.south) -- node[right] {Calls} (nativecs.north);
+	\draw [arrow] ([xshift=2mm]nativecs.south) -- node[right] {FFI Call (Pointer)} ([xshift=2mm]nativekt.north);
+	\draw [arrow] ([xshift=-2mm]nativekt.north) -- node[left] {Return Bytes} ([xshift=-2mm]nativecs.south);
+	\draw [dashed] (proto.north) |- node[above, pos=0.8] {Generates .cs} (nativecs.west);
+	\draw [dashed] (proto.south) |- node[below, pos=0.8] {Generates .kt} (nativekt.west);
+	\draw [arrow] (nativekt) -- node[right] {Invokes} (engine);
 
 \end{diagram}
 
