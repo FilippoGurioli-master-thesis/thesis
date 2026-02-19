@@ -176,4 +176,9 @@ As illustrated in diagram \ref{fig:comm_channel}, this creates a continuous comm
 
 \end{diagram}
 
+Along with the \monospace{SimulationManager} the project introduces also another singleton: the \monospace{LinkManager}. \monospace{LinkManager} is a visualization-oriented singleton that maintains and renders the current network links (when enabled), decoupling debugging/inspection concerns from simulation logic.
+
+Aggregate programs depend on neighbor exchange, but the definition of \textit{who is a neighbor} is inherently situated and environment-dependent. In the project, neighborhood construction is handled on the Unity side by creating and removing directed or bidirectional links through the \monospace{SimulationManager} \ac{API}. This enables multiple strategies, ranging from geometric proximity to occlusion-aware connectivity or application-specific policies. A common and efficient pattern leverages Unity’s physics system and trigger colliders. For instance, a connection rule component that automatically subscribes/unsubscribes links when other nodes enter/exit a proximity volume can be implemented by annotating the implementing class with an attribute, whose
+\monospace{OnTriggerEnter} and \monospace{OnTriggerExit} methods call the appropriate link-management \ac{API} to maintain the neighborhood structure. By delegating neighborhood dynamics to Unity, the integration can directly reuse engine-level facilities (collisions, triggers, layers, and spatial partitioning), while keeping the Collektive runtime agnostic of the specific spatial model.
+
 \section{Implementation Details}
