@@ -17,6 +17,7 @@ As shown in ~\cref{fig:engine_facade} diagram this class should have methods to 
 		{\centering \textbf{<<interface>>} \\ \textbf{Engine} \par}
 		\vspace{-1ex}
 		\rule{\linewidth}{0.4pt} \\
+		\vspace{1ex}
 		\parbox{\linewidth}{
 			\raggedright
 			+ addNode(id: Int): Boolean \\
@@ -36,6 +37,7 @@ To follow the \ac{SRP} \cite{wiki_SRP} it has been created a helper component th
 		{\centering \textbf{<<interface>>} \\ \textbf{NetworkManager} \par}
 		\vspace{-1ex}
 		\rule{\linewidth}{0.4pt} \\
+		\vspace{1ex}
 		\parbox{\linewidth}{
 			\raggedright
 			+ registerNode(id: Int) \\
@@ -59,6 +61,7 @@ To follow the \ac{SRP} \cite{wiki_SRP} it has been created a helper component th
 		{\centering \textbf{<<interface>>} \\ \textbf{Mailbox<ID: Any>} \par}
 		\vspace{-1ex}
 		\rule{\linewidth}{0.4pt} \\
+		\vspace{1ex}
 		\parbox{\linewidth}{
 			\raggedright
 			+ inMemory: Boolean \\
@@ -126,13 +129,14 @@ As illustrated in diagram \ref{fig:comm_channel}, this creates a continuous comm
 		{\centering \textbf{SimulationManager} \par}
 		\vspace{-1ex}
 		\rule{\linewidth}{0.4pt} \\
+		\vspace{1ex}
 		\parbox{\linewidth}{
 			\raggedright
 			+ addNode(id: Int): Boolean \\
 			+ removeNode(id: Int): Boolean \\
 			+ addConnection(n1: Int, n2: Int): Boolean \\
 			+ removeConnection(n1: Int, n2: Int): Boolean \\
-			+ step(id: Int, input: InputData): OutputData
+			+ step(id: Int, sensors: SensorData): ActuatorData
 		}
 	};
 
@@ -156,13 +160,14 @@ As illustrated in diagram \ref{fig:comm_channel}, this creates a continuous comm
 		{\centering \textbf{<<interface>>} \\ \textbf{Engine} \par}
 		\vspace{-1ex}
 		\rule{\linewidth}{0.4pt} \\
+		\vspace{1ex}
 		\parbox{\linewidth}{
 			\raggedright
 			+ addNode(id: Int): Boolean \\
 			+ removeNode(id: Int): Boolean \\
 			+ addConnection(n1: Int, n2: Int): Boolean \\
 			+ removeConnection(n1: Int, n2: Int): Boolean \\
-			+ step(id: Int, input: InputData): OutputData
+			+ step(id: Int, sensors: SensorData): ActuatorData
 		}
 	};
 
@@ -180,5 +185,66 @@ Along with the \monospace{SimulationManager} the project introduces also another
 
 Aggregate programs depend on neighbor exchange, but the definition of \textit{who is a neighbor} is inherently situated and environment-dependent. In the project, neighborhood construction is handled on the Unity side by creating and removing directed or bidirectional links through the \monospace{SimulationManager} \ac{API}. This enables multiple strategies, ranging from geometric proximity to occlusion-aware connectivity or application-specific policies. A common and efficient pattern leverages Unity’s physics system and trigger colliders. For instance, a connection rule component that automatically subscribes/unsubscribes links when other nodes enter/exit a proximity volume can be implemented by annotating the implementing class with an attribute, whose
 \monospace{OnTriggerEnter} and \monospace{OnTriggerExit} methods call the appropriate link-management \ac{API} to maintain the neighborhood structure. By delegating neighborhood dynamics to Unity, the integration can directly reuse engine-level facilities (collisions, triggers, layers, and spatial partitioning), while keeping the Collektive runtime agnostic of the specific spatial model.
+
+The final piece in the Unity frontend is the \monospace{AbstractNode}. \monospace{AbstractNode} marks a game object as a Collektive device. It defines the extension points that are scenario-specific: how sensor data is sampled from the Unity world, and how actuator commands are applied. Concrete scenarios are implemented by subclassing \monospace{AbstractNode} and providing the domain logic for sensing and actuation, while reusing the integration-provided communication and execution machinery. 
+
+A final overview of the frontend is presented in \cref{fig:frontend_overview}
+
+
+\begin{diagram}{frontend_overview}{General overview of the frontend components.}
+	\node [block, text width=20em] (simman) {
+		{\centering \textbf{SimulationManager} \par}
+		\vspace{-1ex}
+		\rule{\linewidth}{0.4pt} \\
+		\vspace{1ex}
+		\parbox{\linewidth}{
+			\raggedright
+			+ addNode(id: Int): Boolean \\
+			+ removeNode(id: Int): Boolean \\
+			+ addConnection(n1: Int, n2: Int): Boolean \\
+			+ removeConnection(n1: Int, n2: Int): Boolean \\
+			+ step(id: Int, sensors: SensorData): ActuatorData
+		}
+	};
+
+	\node [block, text width=12em, below of=simman, node distance=4cm] (node) {
+		{\centering \textbf{<<abstract>>} \\ \textbf{Node} \par}
+		\vspace{-1ex}
+		\rule{\linewidth}{0.4pt} \\
+		\vspace{1ex}
+		\parbox{\linewidth}{
+			\raggedright
+      + Id: Int \\
+      \textit{+ Sense(): SensorData} \\
+      \textit{+ Act(ActuatorData)} \\
+		}
+	};
+
+	\node [block, text width=20em, right of=node, xshift=12em] (lm) {
+		{\centering \textbf{LinkManager} \par}
+		\vspace{-1ex}
+		\rule{\linewidth}{0.4pt} \\
+		\vspace{1ex}
+		\parbox{\linewidth}{
+			\raggedright
+      + showLinks: Boolean \\
+      + addConnection(node1: Node, node2: Node) \\
+      + removeConnection(node1: Node, node2: Node) \\
+			+ removeAllConnectionsFor(node: Node) \\
+      + clearConnections()
+		}
+	};
+
+
+	\node [block, text width=11em, below of=node, node distance=3cm] (concnode) {
+		{\centering \textbf{ConcreteNode} \par}
+	};
+
+
+	\draw [arrow] (simman) -- node[right, font=\sffamily\scriptsize] {uses} (lm);
+  \draw [arrow] (simman) -- node[right, font=\sffamily\scriptsize] {interacts} (node);
+  \draw [arrow] (node) -- node[right, font=\sffamily\scriptsize] {} (simman);
+	\draw [arrow] (concnode) -- node[right, font=\sffamily\scriptsize] {implements} (node);
+\end{diagram}
 
 \section{Implementation Details}
