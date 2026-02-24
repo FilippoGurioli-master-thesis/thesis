@@ -88,7 +88,7 @@ To close the loop between development and distribution, the project employs \mon
 All source code is subjected to deep static analysis via SonarQube \cite{sonarsource}. This tool serves as a quality gate that evaluates code smells, security vulnerabilities, and cyclomatic complexity. By integrating this into the integration pipeline, the project ensures that only code meeting a specific `Clean Code' threshold is merged into the stable branches.
 
 \paragraph{\ac{CI}}
-The \ac{CI} pipeline, powered by GitHub Actions, is designed to validate the project across a matrix of environments. It performs a multi-platform build (Windows, Linux, and macOS) to ensure cross-platform compatibility and executes both NUnit-based Runtime and Editor tests in a headless Unity environment.
+The \ac{CI} pipeline, powered by GitHub Actions, is designed to validate the project across a matrix of environments. It performs a multi-platform build (Windows, Linux, and macOS) to ensure cross-platform compatibility, and runs both NUnit-based Runtime and Editor tests in a headless Unity environment.
 
 \paragraph{Artifact Signing}
 To ensure the authenticity and non-repudiation of the distributed package, the infrastructure includes an automated GPG signing stage. During the release process, the artifact is cryptographically signed using a private key generated during the initialization phase, allowing users to verify the integrity of the package.
