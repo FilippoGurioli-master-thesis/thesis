@@ -10,3 +10,53 @@ To contextualize the contributions of this thesis, it is necessary to establish 
 \subsection{The Reality Gap}
 \subsection{Reealism vs. Scalability}
 \section{Game Engines as Simulators}
+Traditionally, the simulation of complex systems has been addressed through dedicated academic tools or agent-based modeling frameworks, often characterized by a high level of abstraction, but limited in their physical and spatial representation. In contrast, modern game engines integrate advanced physics engines, optimized rendering pipelines, scripting tools, and visual development environments, enabling the creation of high-fidelity three-dimensional environments in which autonomous agents can operate under realistic constraints.
+
+\subsection{What is a Game Engine}
+A game engine is the core software of a video game or any other application that uses real-time graphics. It provides the fundamental technologies, simplifies the development process, and often allows the game to run on different platforms, such as consoles and computer operating systems. The main features typically offered by a game engine include a rendering system for 2D and 3D graphics, physics and collision detection, audio management, scripting, animations, artificial intelligence, networking, and scene-graph management.
+
+Game engines often provide a suite of visual development tools in addition to reusable software components. These tools are generally provided in an integrated development environment to enable a simplified and rapid development of games in a data-driven manner \cite{wiki_gameengine}.
+
+At present, Unity, Unreal Engine and Godot are the three most widely used options among the game development community.
+
+\subsection{Relevance of Game Engines Beyond Gaming}
+Adopting a game engine as a simulation platform offers several advantages over traditional academic tools.
+
+Provides real-time 3D rendering, which supports both qualitative analysis and debugging processes.
+It has integrated physics engines capable of simulating realistic dynamics.
+The visual development environment enables rapid prototyping and iterative design.
+Most popular game engines have a mature ecosystem of tools and plugins and also support for automated execution and batch processing.
+
+\subsection{Unity: Core Concepts and Functionalities}
+The project developed in this thesis is built on Unity, a game engine created by Unity Technologies and widely used in both industrial and academic contexts fig.\ref{fig:unity-editor}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\linewidth]{images/unity-editor.png}
+    \caption{The main view of the Unity Editor \cite{unity_projectview}.}
+    \label{fig:unity-editor}
+\end{figure}
+
+Unity adopts a GameObject–Component architectural model, in which every entity within a scene is represented as a container object to which modular components are attached. Behaviors are implemented through C\# scripts that interact with the engine’s update cycle.
+
+The fundamental concepts include:
+\begin{itemize}
+    \item \textbf{Scenes}: hierarchical object containers that define and organize the simulated environment.
+    \item \textbf{GameObject}: the basic entity of the simulation.
+    \item \textbf{Component}: functional modules that can be applyed to GameObjects (e.g., Transform, Rigidbody, Collider).
+    \item \textbf{Prefab}: reusable templates.
+    \item \textbf{Lifecycle methods}: methods such as Update() and FixedUpdate() that define time-dependent behavior \cite{unity_manual}.
+\end{itemize}
+
+This paradigm naturally lends itself to the modeling of collective systems: each agent can be represented as a GameObject equipped with components that implement perception, communication, and decision-making behavior.
+
+Within this architectural framework, physical interaction and spatial dynamics are handled by Unity’s built-in 3D physics system, which is based on the integration of NVIDIA’s PhysX engine, developed in close collaboration with NVIDIA.
+
+The NVIDIA PhysX SDK is an open-source, scalable real-time physics engine designed to support advanced simulations, enabling more immersive gameplay through realistic physical behavior and dynamic real-time effects. It provides a framework for modeling 3D environments, allowing developers to create and remove physical entities (actors) and manage both direct and proximity-based interactions between them \cite{unity_physics}.
+
+\subsection{Unity as the Preferred Platform for This Study}
+The decision to adopt Unity as the platform for simulating the collective system explored in this thesis is driven by several considerations.
+
+Unity provides the capability for realistic three-dimensional simulation and integrates naturally with an agent-based modeling approach. It allows for the accurate representation of physical and spatial constraints, offers advanced visual debugging features, and supports automation and testing workflows, making it a highly suitable environment for this study.
+
+A comparison with Unreal Engine shows that, although the latter offers a more advanced graphics pipeline, Unity represents an effective balance between simulation fidelity, architectural flexibility, and development speed.
