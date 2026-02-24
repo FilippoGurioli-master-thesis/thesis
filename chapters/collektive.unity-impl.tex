@@ -248,3 +248,49 @@ A final overview of the frontend is presented in \cref{fig:frontend_overview}
 \end{diagram}
 
 \section{Implementation Details}
+
+In this section it will be explained in more details certain parts of the project that have intresenting insights.
+
+\subsection{Unity assets}
+
+Unity provides a robust asset system centered around \textit{Prefabs}, which were instrumental in this project’s development. According to the official documentation, the Prefab system `allows you to create, configure, and store a GameObject complete with all its components, property values, and child GameObjects as a reusable asset' \cite{unity_prefabs_6000}. By leveraging this system, a \monospace{SimulationManager} Prefab was developed. This asset encapsulates both the \monospace{SimulationManager} and \monospace{LinkManager} components; consequently, a standard Unity scene can be converted into a simulation environment simply by instantiating this single Prefab.
+
+\subsection{Design Patterns in Unity}
+
+Implementing traditional design patterns within the Unity ecosystem presents unique challenges. Because Unity utilizes a Component-Based Architecture rather than a strict object-oriented hierarchy, maintaining high-quality, decoupled code is not always intuitive. For this project, the \monospace{SimulationManager} and \monospace{LinkManager} were architected as Singletons to centralize simulation logic.
+
+In general software engineering, the Singleton pattern is intended to `ensure [classes] only have one instance, provide easy access to that instance, and control their instantiation' \cite{wiki_singleton_pattern}. However, in Unity, a script's lifecycle is inextricably linked to the \monospace{GameObject} to which it is attached. To reconcile the Singleton pattern with Unity’s scene-based execution, the \monospace{SingletonBehaviour} class was implemented, as illustrated in \cref{lst:singleton}.
+
+The implementation leverages the Unity engine's \acp{API} to enforce instance uniqueness across the execution lifecycle:
+
+\begin{itemize}
+\item the \monospace{Object.FindObjectOfType<T>} method is employed to query all active \monospace{MonoBehaviour} instances within the current scene hierarchy, returning the existing instance or \monospace{null} if none is present;
+\item the \monospace{AddComponent<T>} method is used to attach the component to a programmatically instantiated \monospace{GameObject} in the event that no prior instance is detected;
+\item the \monospace{DontDestroyOnLoad} method is invoked to ensure the persistence of the manager across scene transitions, preventing the engine from deallocating the object during level loads.
+\end{itemize}
+
+\lstinputlisting[float,language=csharp,label={lst:singleton},caption={Implementation of the Singleton pattern in Unity.}]{listings/SingletonBehaviour.cs}
+
+\subsection{Unity Editor Customization}
+
+The Unity environment offers a robust framework for extending the Editor's native capabilities through user-defined scripts. This project leverages this extensibility for two primary objectives:
+
+\begin{itemize}
+\item the automation of repetitive build and configuration tasks;
+\item the enhancement of runtime observability and debugging.
+\end{itemize}
+
+\paragraph{Workflow Automation}
+During the development phase, the integration of the backend required frequent recompilation of native libraries and the relocation of the resulting \monospace{.so} binaries into specific Unity-accessible directories. Additionally, updates to the communication protocol necessitated the regeneration of source code from \monospace{.proto} definitions. To streamline these processes, two custom menu utilities were implemented within the Editor's global navigation bar:
+
+\begin{itemize}
+\item Native Rebuild: Accessible via \monospace{Tools > Native > Rebuild backend}, this utility automates the Collektive backend build process and ensures the binary is correctly placed for linking.
+\item Protocol Generation: The \monospace{Tools > Proto > Generate} option triggers the Protocol Buffer compiler to process \texttt{.proto} files and output the generated classes directly into the project's script folder.
+\end{itemize}
+
+\paragraph{Runtime Debugging and Observability}
+Because Unity employs a proprietary internal console for logging, monitoring the internal state of the native backend during execution can be cumbersome. To mitigate this, a custom \monospace{ReadOnly} attribute was developed.
+
+When applied to a field already marked with Unity's \monospace{SerializeField} attribute, this custom decorator ensures the value is rendered in the \textit{Inspector} as a read-only field. By binding these fields to data returned from the backend, the \textit{Inspector} serves as a real-time monitoring dashboard. This allows for the observation of backend state changes directly within the Editor UI without the risk of manual accidental modification by the user. A screenshot of this can be seen at \cref{fig:readonly-prop.png}.
+
+\fig{readonly-prop.png}{Screenshot that shows how readonly properties appear in the Unity Editor \textit{Inspector} tab. In this image \textit{Total Nodes} and \textit{Accumulator} are both readonly.}

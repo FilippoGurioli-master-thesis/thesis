@@ -1,3 +1,130 @@
 \chapter{Unity-Package-Template: Automated Unity Development Infrastructure}
+
+The mismatch between professional software engineering standards and the project-centric nature of the Unity Editor required the deliberate creation of this production-ready architecture. The environment's dependability is crucial in a research-focused setting such as the \ac{CAS} simulator; if the underlying framework is non-deterministic or prone to human configuration errors, the validity of the data produced is compromized. The emphasis was moved from handling Unity's peculiar project structures to a modular, package-oriented approach by designing a `template-first' methodology. by treating the simulator as a high-integrity library rather than a single executable, this methodology makes sure that the core functionality is independent of the particular Unity version or project parameters being used for visualization.
+
 \section{Requirements}
-\section{Features}
+
+Requirements for this project are split into separated categories. It aims at supporting both template users and developers.
+
+\subsection{Business Requirements}
+
+\begin{itemize}
+  \item The project shall provide a `Zero-Friction' onboarding process by enabling a developer to move from cloning to a working development environment in a single step.
+  \item The system must inject unique namespaces, names, and domains into the boilerplate code during initialization.
+  \item The infrastructure shall automate repetitive tasks like dependency installation and secrets upload to GitHub.
+  \item The project must treat the code as a distributable library rather than a standalone executable.
+  \begin{itemize}
+    \item It must distinguish between Runtime and Editor content.
+    \item It must make no assumptions about the final playable build or entry point.
+  \end{itemize}
+  \item The template must be self-evolving, allowing the infrastructure to be updated without breaking the projects that were instantiated from it.
+\end{itemize}
+
+\subsection{Domain Requirements}
+
+\subsubsection{Unity Ecosystem Domain}
+
+\begin{itemize}
+  \item The system shall enable package development with the ease of the Unity Editor.
+  \item The repository structure must adhere to the \ac{UPM} directory conventions \cite{unity_manual_package_types_2026}.
+  \item The system must handle the specific challenges of Unity asset version control, such as the merging of YAML-based files (scenes, prefabs, and metas).
+\end{itemize}
+
+\subsubsection{DevOps Domain}
+
+\begin{itemize}
+  \item The infrastructure must guarantee deterministic versioning, where version increments are tied to the intent of the changes.
+  \item The repository must enforce no development secrets, local licenses, or temporary editor files are leaked into the public source.
+  \item The system must enable `Policy as Code', making branching rules, quality gates, and release logic explicit and reviewable.
+\end{itemize}
+
+\subsubsection{Trust Domain}
+
+\begin{itemize}
+  \item The system must provide authenticity ensuring that every release is signed and can be audited back to a specific commit.
+\item The infrastructure must support \textit{living documentation}, where \ac{API} references and usage guides stay synchronized with the evolving code.
+\end{itemize}
+
+\subsection{Functional Requirements}
+
+\begin{itemize}
+  \item The system should allow a user to initialize a fully configured repository with a single command.
+  \item The setup process must automatically configure project metadata across all internal configurations, including domain, company, package name, namespace, display name, description, and developer identity.
+  \item The system should handle the automated injection of required secrets for CI/CD (Unity licenses, analysis tokens) during the initial bootstrap.
+  \item The system must provide automated validation for code style and static analysis.
+  \item The infrastructure should automatically execute tests across different categories (Runtime and Editor) in a headless environment.
+  \item The system must prevent the integration of code that does not meet the defined quality gates or commit message standards.
+\end{itemize}
+
+\subsection{Non-Functional Requirements}
+
+\begin{itemize}
+\item The infrastructure must be executable on all three main OSes (i.e. Windows, Linux and MacOS).
+\item Setup failure must be `loud' and diagnostic, providing clear error messages when prerequisites are missing.
+\end{itemize}
+
+\section{Features and Tooling}
+
+To satisfy the requirements previously defined, a robust infrastructure was synthesized using a combination of industry-standard DevOps tools and bespoke automation logic.
+
+\subsection{Version Control System Management}
+
+The integrity of the codebase is maintained through a series of automated gates that prevent the accumulation of technical debt:
+
+\paragraph{Husky}
+To ensure a deterministic versioning history, Husky \cite{husky} is used to manage Git hooks. It enforces the Conventional Commits specification \cite{conventionalcommits}, ensuring that every change intent is human-readable and machine-parsable. Moreover, on each commit, Husky performs fast local static checks including:
+
+\begin{itemize}
+  \item automatic formatting of C\# code to maintain stylistic consistency;
+  \item validation of Unity-specific \monospace{.meta} and \monospace{.unity} (YAML) files to prevent asset corruption or missing references.
+\end{itemize}
+
+\paragraph{Semantic Release}
+To close the loop between development and distribution, the project employs \monospace{semantic-release} \cite{semanticrelease}. This tool automates the entire package release workflow, including determining the next version number based on the commit history, generating a \monospace{CHANGELOG.md}, and publishing release artifacts to GitHub without manual intervention.
+
+\subsection{Code Quality}
+
+\paragraph{SonarQube}
+All source code is subjected to deep static analysis via SonarQube \cite{sonarsource}. This tool serves as a quality gate that evaluates code smells, security vulnerabilities, and cyclomatic complexity. By integrating this into the integration pipeline, the project ensures that only code meeting a specific `Clean Code' threshold is merged into the stable branches.
+
+\paragraph{\ac{CI}}
+The \ac{CI} pipeline, powered by GitHub Actions, is designed to validate the project across a matrix of environments. It performs a multi-platform build (Windows, Linux, and macOS) to ensure cross-platform compatibility and executes both NUnit-based Runtime and Editor tests in a headless Unity environment.
+
+\paragraph{Artifact Signing}
+To ensure the authenticity and non-repudiation of the distributed package, the infrastructure includes an automated GPG signing stage. During the release process, the artifact is cryptographically signed using a private key generated during the initialization phase, allowing users to verify the integrity of the package.
+
+\subsection{Dependency Drift}
+
+\paragraph{Renovate}
+To mitigate the risk of `dependency rot', Renovate \cite{renovatebot} is integrated into the repository. Unlike standard configurations, this project utilizes a custom regular expression manager to track and update dependencies within Unity's \monospace{package.json} and manifest files. This ensures that any project instantiated from the template always benefits from the latest security patches and engine features while providing a transparent review process through automated Pull Requests.
+
+\subsection{Developer Experience}
+
+Ensuring a flawless development experience is a major requirement for this project. Several tools and architectural patterns have been adopted to improve the developer's quality of life.
+
+\paragraph{Unity Smart Merge}
+Since Unity assets are stored in YAML, standard merge tools often fail to resolve conflicts in scenes or prefabs. The infrastructure automatically configures the \textit{Unity YAML Merge} tool (SmartMerge) \cite{unity_manual_smartmerge_2026} within the local Git configuration, drastically reducing the friction of collaborative environment design.
+
+\paragraph{DocFX}
+To bridge the gap between source code and usable documentation, the project utilizes DocFX \cite{docfx}. This tool functions as a static site generator that targets .NET assemblies. It extracts XML documentation comments (docstrings) directly from the C\# source code to build a comprehensive, searchable \ac{API} reference. By treating documentation as code, DocFX allows the infrastructure to host a specialized website that includes both conceptual manuals and technical \ac{API} documentation. This ensures that the library's public surface is always accurately reflected in the documentation, preventing the common `documentation lag' found in rapidly evolving projects.
+
+\paragraph{Boot Command}
+The project factory is encapsulated in a bespoke \monospace{init} script. This script orchestrates the transformation from a generic template to a specific project by:
+\begin{itemize}
+  \item automatically renaming directories and updating Assembly Definitions (\monospace{.asmdef}) \cite{unity_asmdef_2020} with project-specific namespaces;
+  \item injecting project-specific values (Domain, Company, Package Name, Namespace, Display Name, Description, Git username, and Git email) across all internal configurations;
+  \item handling automated licensing based on user preferences;
+  \item uploading repository secrets (e.g. GPG keys, Sonar tokens and Unity licenses) via the GitHub CLI \cite{github_cli_official};
+  \item installing npm and .NET dependencies;
+  \item booting Unity in batch mode to generate the initial \monospace{.meta} files and installing Git hooks to ensure the environment is `ready-to-edit' upon completion;
+  \item opening the Unity Editor inside the sandbox for immediate development;
+  \item creating the \monospace{develop} branch, applying automated branch and tag protection rules to the \monospace{main} and \monospace{develop} branches to enforce the quality gates from day one;
+  \item committing all initialization changes and tagging that commit as \monospace{0.0.0}, which anchors the semantic versioning chain;
+  \item removing the \monospace{.template} file and the \monospace{init} script itself, as they are no longer needed once the project has been bootstrapped.
+\end{itemize}
+
+\paragraph{Template Mode}
+A key architectural challenge was that the template itself requires a \ac{CI} pipeline for its own development and maintenance, while the projects instantiated from it require a fundamentally different one oriented towards package distribution. This duality is resolved through the presence of a single sentinel file: \monospace{.template}. When this file exists in the repository, the pipeline operates in \textit{Template Mode}, executing the validation and release logic appropriate for the template infrastructure itself. Upon a successful \monospace{init} run, the file is deleted, and from that point forward the same pipeline switches to \textit{Package Mode}, running the full package build, test, quality gate, signing, and release workflow. This design directly satisfies the self-evolving requirement: the template infrastructure can be continuously improved using its own automation, and any project instantiated from it inherits those improvements transparently via Renovate's automated dependency update pull requests.
+
+\paragraph{Sandbox Pattern}
+Because the Unity Editor cannot develop a package in complete isolation, the project implements a `Sandbox' architecture. This consists of a minimal Unity project within the repository that references the package via a local file path. This allows developers to use the full suite of Editor tools while ensuring the package itself remains clean and ready for external distribution via the \ac{UPM}.
