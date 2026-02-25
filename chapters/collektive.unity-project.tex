@@ -81,7 +81,7 @@ Requirements are split into separated categories.
 \subsection{Non-Functional Requirements}
 
 \begin{itemize}
-	\item The system should maintain stable frame rate ( > 30 FPS) with at least 500 active collektive nodes in a low budget laptop (ryzen 7 5700U, 16GB DDR4, integrated GPU).
+	\item The system should maintain stable frame rate ( > 30 FPS) with at least 100 active collektive nodes in a low budget laptop (ryzen 7 5700U, 16GB DDR4, integrated GPU).
 	\item The system should be implemented with the fastest technology found during exploration.
 \end{itemize}
 
@@ -140,7 +140,7 @@ For individual nodes, the parser abstracts Unity’s internal state into the lan
 
 \subsubsection{Core Bridge}
 
-The Core Bridge represents the central link in the system, serving as the high-speed interface between the Unity C\# environment and the Collektive Kotlin/JVM runtime. To satisfy the strict non-functional requirement of maintaining high frame rates with over 500 active nodes, the bridge is implemented as a \ac{FFI} layer.
+The Core Bridge represents the central link in the system, serving as the high-speed interface between the Unity C\# environment and the Collektive Kotlin/JVM runtime. To satisfy the strict non-functional requirement of maintaining high frame rates with over 100 active nodes, the bridge is implemented as a \ac{FFI} layer.
 
 The choice of \ac{FFI} over more traditional \ac{IPC} methods was driven by the need to minimize serialization overhead and context-switching latency. By exposing Collektive’s core logic as a native library, the bridge allows Unity to perform direct memory-to-memory communication. To ensure data consistency across the two environments, the bridge enforces a synchronous execution model. Each simulation `tick' triggers a blocking call: the Unity engine pauses its internal loop while the bridge marshals the data and waits for the Collektive engine to complete its computation round.
 

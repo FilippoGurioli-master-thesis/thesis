@@ -1,9 +1,55 @@
 \chapter{Results} \label{chap:results}
 
+This chapter focuses on validating the technical performance of the integration and assessing its ability to handle the complexities of \acp{CAS} in real-time. The primary objective is to demonstrate that the architectural choice of a \ac{FFI} provides the necessary throughput for high-frequency simulations while maintaining the synchronization required for aggregate computing.
+
 \section{Comparison with Socket-based Communication} \label{sec:comparison}
 
-A critical evaluation was conducted to validate the performance of the communication bridge chosen for Collektive⨯Unity. This study originated from an experimental prototype built with $12$ nodes, designed to compare two distinct communication strategies: a socket-based backend and a native backend. In the socket-based configuration, Unity and Collektive operated as separate processes, exchanging data through TCP sockets. This was compared against a native backend where Collektive was compiled into a shared library and invoked directly by Unity through a \ac{FFI}. While the socket-based approach theoretically offered greater flexibility by supporting any Collektive target, it was hypothesized that the native backend would provide the low-latency performance required for high-frequency aggregate computing.
+An evaluation was conducted to validate the performance of the communication bridge chosen for Collektive⨯Unity. This study originated from an experimental prototype built with $12$ nodes, designed to compare two distinct communication strategies: a socket-based backend and a native backend. In the socket-based configuration, Unity and Collektive operated as separate processes, exchanging data through TCP sockets. This was compared against a native backend where Collektive was compiled into a shared library and invoked directly by Unity through a \ac{FFI}. While the socket-based approach theoretically offered greater flexibility by supporting any Collektive target, it was hypothesized that the native backend would provide the low-latency performance required for high-frequency aggregate computing.
 
-The results of this benchmark, which has been publicly archived~\cite{benchmark}, revealed a massive performance gap that confirmed the superiority of the native integration. On average, the socket-based backend was found to be over $450$ times slower than the native \ac{FFI} backend. Under peak load, this disparity widened even further, with a worst-case slowdown exceeding $700$ times. These findings indicate that while socket-based communication is technically possible, it introduces a prohibitive `interop tax' that makes real-time simulation of collective systems unfeasible.
+The results of this benchmark, which has been publicly archived~\cite{benchmark}, revealed a massive performance gap that confirmed the superiority of the native integration. On average, the socket-based backend was found to be over $450$ times slower than the native \ac{FFI} backend. Under peak load, this disparity widened even further, with a worst-case slowdown exceeding $700$ times as shown in~\cref{tab:benchmark}. These findings indicate that while socket-based communication is technically possible, it introduces an `interop tax' that makes real-time simulation of collective systems prohibitive.
+
+\begin{table*}[t]
+    \centering
+    \caption{Performance comparison between the native (\ac{FFI}) and socket-based backends.
+    Times are in nanoseconds (ns).
+    Speedup is reported as Socket/Native.}
+    \label{tab:benchmark}
+    \setlength{\tabcolsep}{6pt}
+    \renewcommand{\arraystretch}{1.15}
+    \begin{tabular}{lrrrrrr}
+        \hline
+        \textbf{Metric} & \multicolumn{3}{c}{\textbf{Overhead Collektive-side}} & \multicolumn{3}{c}{\textbf{End-to-end (ns)}} \\
+        \cline{2-4}\cline{5-7}
+        & \textbf{FFI} & \textbf{Socket} & \textbf{Speedup} & \textbf{Native} & \textbf{Socket} & \textbf{Speedup} \\
+        \hline
+        count  & 970 & 969 & -- & 969 & 968 & -- \\
+        median & 13830 & 137857 & 11.20$\times$ & 550600 & 200001950 & 363.32$\times$ \\
+        mean   & 13175 & 170269 & 13.86$\times$ & 484754 & 199963813 & 456.26$\times$ \\
+        p95    & 16597 & 348890 & 28.02$\times$ & 612140 & 200560775 & 719.35$\times$ \\
+        p99    & 36306 & 456583 & 41.25$\times$ & 850520 & 202753798 & 747.95$\times$ \\
+        std    & 4843  & 265368 & -- & 141814 & 3265095 & -- \\
+        \hline
+    \end{tabular}
+\end{table*}
 
 The data confirms that the decision to adopt \ac{FFI} was essential for maintaining the $20Hz$ execution frequency required for the simulations described in the preceding case studies. By eliminating the overhead of the network stack and inter-process serialization, the \ac{FFI}-based toolchain ensures that the computational budget is spent on the aggregate logic and physics interactions rather than on communication bottlenecks. This validation reinforces the position of Collektive⨯Unity as a high-performance framework capable of bridging functional aggregate programming with the demanding requirements of a real-time game engine.
+
+\section{Benchmark Methodology}
+
+The evaluation of the communication layer was conducted using a controlled experimental prototype featuring $12$ stationary nodes. To ensure a fair and repeatable comparison, both the socket-based and native test scenarios utilized identical Unity scenes where the communication bridge was the sole variable. The nodes were positioned in a side-by-side linear formation with a designated source node at the center. With a fixed communication radius of 3 units, this topology resulted in a stable connectivity graph where the average distance between neighbors remained consistently of 2 units.
+
+The collective program chosen for this benchmark simulated a fundamental aggregate computing pattern: the discovery and propagation of a distance-based gradient. Each node was tasked with determining its intensity relative to the central source by identifying the neighbor with the lowest intensity and adding the linear distance to that neighbor. To provide immediate visual feedback, nodes dynamically updated their color in the Unity scene to represent their current gradient value. A strictly synchronous execution model was employed, where Unity halted each frame to await a completed response from the backend. This `lock-step' synchronization was intentional, as it directly exposed the end-to-end latency of the communication bridge as the primary bottleneck in the simulation loop.
+
+\section{Benchmark Setup and Data Collection}
+
+The benchmarking toolchain was designed for high granularity and statistical significance, tracking at least $1000$ execution cycles for each strategy. The project structure was divided into a Kotlin-based backend and a Unity-based frontend, with data collection points integrated into both. Four distinct datasets were generated to capture specific metrics: \monospace{native.csv} and \monospace{socket.csv} for backend performance, and \monospace{unity\_native.csv} and \monospace{unity\_socket.csv} for the frontend perspective. To ensure the integrity of the results, a warm-up window of the first $30$ samples was discarded to eliminate the noise associated with initial memory allocations, JIT compilation, and connection establishment.
+
+The metrics measured provided a detailed view of the lifecycle of an aggregate round. On the backend, the system recorded the total service time and the specific duration of the Collektive computation. The distribution of this backend overhead is visualized in~\cref{fig:backend-chart.png}, which demonstrates that the native integration significantly reduces the computational tax compared to the socket-based server approach.
+
+\fig{backend-chart.png}{Distribution of backend overhead for FFI and Socket-based communication.}
+
+On the frontend, the end-to-end latency was captured alongside granular measurements of the \ac{FFI} call duration and socket waiting periods. The disparity in performance is captured in the end-to-end latency distribution shown in~\cref{fig:frontend-chart.png}, confirming that the native \ac{FFI} bridge maintains a near-zero latency profile relative to the significant delays introduced by TCP communication.
+
+\fig{frontend-chart.png}{Comparison of front-end end-to-end latency between communication backends.}
+
+This level of detail allowed for a precise identification of where the `interop tax' was most significant. Furthermore, the entire experiment was packaged into an automated suite. Any researcher with a Linux environment, Python 3.10, and the specified version of Unity (6000.2.15f1) can replicate the results by running the \monospace{./benchmark.sh} script, which handles the orchestration of the processes and the subsequent generation of performance charts.
