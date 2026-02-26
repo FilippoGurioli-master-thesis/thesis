@@ -85,7 +85,7 @@ The project developed in this thesis is built on Unity, a game engine created by
     \label{fig:unity-editor}
 \end{figure}
 
-Unity adopts a \empth{GameObject–Component} architectural model, in which every entity within a scene is represented as a container object to which modular components are attached. Behaviors are implemented through C\# scripts that interact with the engine’s update cycle.
+Unity adopts a \emph{GameObject–Component} architectural model, in which every entity within a scene is represented as a container object to which modular components are attached. Behaviors are implemented through C\# scripts that interact with the engine’s update cycle.
 
 The fundamental concepts include:
 \begin{itemize}
@@ -93,7 +93,7 @@ The fundamental concepts include:
     \item \textbf{GameObject}: the basic entity of the simulation.
     \item \textbf{Component}: functional modules that can be applyed to GameObjects (e.g., Transform, Rigidbody, Collider).
     \item \textbf{Prefab}: reusable templates.
-    \item \textbf{Lifecycle methods}: methods such as \monospace{Update()} and \monospaec{FixedUpdate()} that define time-dependent behavior \cite{unity_manual}.
+    \item \textbf{Lifecycle methods}: methods such as \monospace{Update()} and \monospace{FixedUpdate()} that define time-dependent behavior~\cite{unity_manual}.
 \end{itemize}
 
 This paradigm naturally lends itself to the modeling of collective systems: each agent can be represented as a GameObject equipped with components that implement perception, communication, and decision-making behavior.
