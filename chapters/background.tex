@@ -3,23 +3,70 @@
 To contextualize the contributions of this thesis, it is necessary to establish the theoretical foundations upon which it is built. This chapter explores the evolution of distributed systems toward collective intelligence and examines the formalisms of self-organizing frameworks. By evaluating the limitations of current simulators, this chapter identifies the technical `reality gap' that this research aims to bridge, providing the necessary background to appreciate the integration of high-fidelity game engines into the decentralized coordination workflow.
 
 \section{Distributed Systems and Organizational Complexity}
+
+TODO
+
 \section{Self-Organizing Frameworks}
+\begin{itemize}
+  \item CAS charateristics
+  \item CAS behavior description (describe the whole, not the single)
+  \item possible solutions to CAS representation (macro-programming, find other ways)
+\end{itemize}
 \subsection{Aggregate Computing}
+\begin{itemize}
+  \item use mirko slides
+  \item field calculus
+  \item the program of the single (read local sensors and messages received, compute the shared aggregate program against the previous state (if any), produce a new state and a message to be sent to neighbors, send message to its neighbors)
+  \item split view between theory (continuous, correctness, composability) and tooling (discrete, reality)
+\end{itemize}
 \section{Simulation Landscape}
-\subsection{Paradigms}
+\begin{itemize}
+  \item why simulation is done (costs order of magnitude less than real deployment and systematic assessment)
+  \item TODO: add something else
+\end{itemize}
+
+\subsection{Simulaiton techniques for \aclp{CAS}}
+\begin{itemize}
+      \item not monolithic because different concerns to test requires different modeling
+      \item ABMS
+      \item CAS components embodyment(?) --- physics dynamics becomes a critical aspect
+      \item currently it exists scalable multi-robot simulators - large population, simplified physics
+      \item higher-fidelity simulators - accurate contact dynamics, perception, env interaction
+      \item co-simulators (Idk what is it)
+      \item HIL and mixed reality
+\end{itemize}
 \subsection{The Reality Gap}
-\subsection{Reealism vs. Scalability}
+\begin{itemize}
+  \item moving from simulation to reality
+  \item increasingly detailed simulation
+  \item hardware-in-the-loop (part of the simulation substituted by real hardware)
+  \item mixed-reality
+\end{itemize}
+\subsection{Realism vs. Scalability}
+
+TODO
+
 \section{Game Engines as Simulators}
+
+\begin{itemize}
+  \item used particularly in robotics-oriented simulation
+  \item used for digital twins
+  \item can generate visually rich and complex environment effects
+  \item add what's below
+\end{itemize}
+
 Traditionally, the simulation of complex systems has been addressed through dedicated academic tools or agent-based modeling frameworks, often characterized by a high level of abstraction, but limited in their physical and spatial representation. In contrast, modern game engines integrate advanced physics engines, optimized rendering pipelines, scripting tools, and visual development environments, enabling the creation of high-fidelity three-dimensional environments in which autonomous agents can operate under realistic constraints.
 
 \subsection{What is a Game Engine}
-A game engine is the core software of a video game or any other application that uses real-time graphics. It provides the fundamental technologies, simplifies the development process, and often allows the game to run on different platforms, such as consoles and computer operating systems. The main features typically offered by a game engine include a rendering system for 2D and 3D graphics, physics and collision detection, audio management, scripting, animations, artificial intelligence, networking, and scene-graph management.
 
-Game engines often provide a suite of visual development tools in addition to reusable software components. These tools are generally provided in an integrated development environment to enable a simplified and rapid development of games in a data-driven manner \cite{wiki_gameengine}.
+A game engine is the core software of a video game or any other application that uses real-time graphics. It provides the fundamental technologies, simplifies the development process, and often allows the game to run on different platforms, such as consoles and computer operating systems. The main features typically offered by a game engine include a rendering system for 2D and 3D graphics, physics and collision detection, audio management, scripting, animations, artificial intelligence, networking and scene-graph management.
+
+Game engines often provide a suite of visual development tools in addition to reusable software components. These tools are generally provided in an integrated development environment to enable a simplified and rapid development of games in a data-driven manner~\cite{wiki_gameengine}.
 
 At present, Unity, Unreal Engine and Godot are the three most widely used options among the game development community.
 
 \subsection{Relevance of Game Engines Beyond Gaming}
+
 Adopting a game engine as a simulation platform offers several advantages over traditional academic tools.
 
 Provides real-time 3D rendering, which supports both qualitative analysis and debugging processes.
@@ -28,16 +75,17 @@ The visual development environment enables rapid prototyping and iterative desig
 Most popular game engines have a mature ecosystem of tools and plugins and also support for automated execution and batch processing.
 
 \subsection{Unity: Core Concepts and Functionalities}
+
 The project developed in this thesis is built on Unity, a game engine created by Unity Technologies and widely used in both industrial and academic contexts fig.\ref{fig:unity-editor}.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.75\linewidth]{figures/unity-editor.png}
-    \caption{The main view of the Unity Editor \cite{unity_projectview}.}
+    \caption{The main view of the Unity Editor~\cite{unity_projectview}.}
     \label{fig:unity-editor}
 \end{figure}
 
-Unity adopts a GameObject–Component architectural model, in which every entity within a scene is represented as a container object to which modular components are attached. Behaviors are implemented through C\# scripts that interact with the engine’s update cycle.
+Unity adopts a \empth{GameObject–Component} architectural model, in which every entity within a scene is represented as a container object to which modular components are attached. Behaviors are implemented through C\# scripts that interact with the engine’s update cycle.
 
 The fundamental concepts include:
 \begin{itemize}
@@ -45,7 +93,7 @@ The fundamental concepts include:
     \item \textbf{GameObject}: the basic entity of the simulation.
     \item \textbf{Component}: functional modules that can be applyed to GameObjects (e.g., Transform, Rigidbody, Collider).
     \item \textbf{Prefab}: reusable templates.
-    \item \textbf{Lifecycle methods}: methods such as Update() and FixedUpdate() that define time-dependent behavior \cite{unity_manual}.
+    \item \textbf{Lifecycle methods}: methods such as \monospace{Update()} and \monospaec{FixedUpdate()} that define time-dependent behavior \cite{unity_manual}.
 \end{itemize}
 
 This paradigm naturally lends itself to the modeling of collective systems: each agent can be represented as a GameObject equipped with components that implement perception, communication, and decision-making behavior.
@@ -55,8 +103,16 @@ Within this architectural framework, physical interaction and spatial dynamics a
 The NVIDIA PhysX SDK is an open-source, scalable real-time physics engine designed to support advanced simulations, enabling more immersive gameplay through realistic physical behavior and dynamic real-time effects. It provides a framework for modeling 3D environments, allowing developers to create and remove physical entities (actors) and manage both direct and proximity-based interactions between them \cite{unity_physics}.
 
 \subsection{Unity as the Preferred Platform for This Study}
+
 The decision to adopt Unity as the platform for simulating the collective system explored in this thesis is driven by several considerations.
 
 Unity provides the capability for realistic three-dimensional simulation and integrates naturally with an agent-based modeling approach. It allows for the accurate representation of physical and spatial constraints, offers advanced visual debugging features, and supports automation and testing workflows, making it a highly suitable environment for this study.
 
 A comparison with Unreal Engine shows that, although the latter offers a more advanced graphics pipeline, Unity represents an effective balance between simulation fidelity, architectural flexibility, and development speed.
+
+\section{implications for aggregate-computing simulations}
+\begin{itemize}
+  \item exploited as high fidelity env
+  \item game engine responsible for sensors, actuators and neighborhood exchange
+  \item CAS responsible for neighbor interaction, distributed rounds and collective logic
+\end{itemize}
