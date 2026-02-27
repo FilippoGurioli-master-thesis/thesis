@@ -4,10 +4,40 @@ To contextualize the contributions of this thesis, it is necessary to establish 
 
 \section{Distributed Systems and Organizational Complexity}
 
-TODO
+The foundational definition of a distributed system is provided by Andrew S. Tanenbaum and Maarten Van Steen, who describe it as ``a collection of autonomous computing elements that appears to its users as a single coherent system''~\cite{Tanenbaum_Van_Steen_2001b}. This definition establishes a fundamental tension between the independent nature of the underlying hardware and the unified experience required by the end-user. To fully understand the implications of this paradigm, it is necessary to examine these two components individually.
+
+\paragraph{Collection of autonomous computing elements}
+The first part of the definition emphasizes the heterogeneity and autonomy of the system's components. These nodes can range from high-performance server clusters to resource-constrained microcontrollers, each operating independently without a shared global clock. Consequently, synchronization becomes a primary challenge, as nodes must rely on message-passing to coordinate their actions toward a common goal.
+
+Furthermore, the nature of these collections is increasingly moving from static, hard-wired topologies toward dynamic environments where nodes join and leave the system, a phenomenon known as \emph{churn}~\cite{stutzbach2006understanding}. In such dynamic settings, maintaining a reliable communication path between any two nodes is not guaranteed and must be managed through robust routing and discovery protocols. This autonomy also introduces security and confidentiality concerns: as nodes act independently, the overhead of authentication and secure message exchange can often become a bottleneck for system-wide scalability.
+
+\paragraph{Single coherent system}
+Despite the underlying decentralization, the system must present itself as a unified entity. Coherence implies that the system's behavior remains consistent and predictable from the user's perspective, regardless of where or when the interaction occurs. This requirement leads to the concept of \emph{distribution transparency}, which aims to hide the complexities of the distributed nature of the system from both users and application developers.
+
+A critical aspect of achieving this coherence is the management of failures. In a distributed context, the `perfect network' is a fallacy; instead, systems must be designed under the assumption that components will fail. Treating failures as first-class citizens ensures that the system can maintain its coherent state through fault-tolerance mechanisms, preventing local disruptions from cascading into global system outages.
+
+\paragraph{The Role of Middleware}
+To bridge the gap between autonomous nodes and the need for coherence, a \emph{middleware} layer is typically introduced~\cite{Bernstein_1996}. Middleware acts as an abstraction layer that sits between the operating system and the distributed application, providing a standardized interface for resource sharing and communication. By masking the differences in hardware and local software, middleware enables the development of complex distributed logic without requiring the programmer to manage low-level networking details. In the context of this research, \acp{CAS} and \acp{AC} frameworks can be viewed as specialized middleware designed to manage collective intelligence across high-density, pervasive networks.
+
+\subsection{\aclp{DS} Goals} \label{subsec:ds-goals}
+
+sharing res, transparency, openness, scalability
+
+\subsubsection{Distribution transparency}
+
+access, location, relocation, migration, replication, concurrency, failure
+
+\subsection{\aclp{DS} Kinds}
+
+\paragraph{High-Performance Distributed Systems}
+
+\paragraph{Distributed Information Systems}
+
+\paragraph{Pervasive Systems}
 
 \section{Self-Organizing Frameworks}
 \begin{itemize}
+  \item use mirko slides
   \item CAS charateristics
   \item CAS behavior description (describe the whole, not the single)
   \item possible solutions to CAS representation (macro-programming, find other ways)
@@ -21,19 +51,19 @@ TODO
 \end{itemize}
 \section{Simulation Landscape}
 \begin{itemize}
-  \item why simulation is done (costs order of magnitude less than real deployment and systematic assessment)
-  \item TODO: add something else
+  \item what is simulation
+  \item motivations: costs, time scaling, observability, reproducibility
 \end{itemize}
 
 \subsection{Simulaiton techniques for \aclp{CAS}}
 \begin{itemize}
-      \item not monolithic because different concerns to test requires different modeling
-      \item ABMS
-      \item CAS components embodyment(?) --- physics dynamics becomes a critical aspect
-      \item currently it exists scalable multi-robot simulators - large population, simplified physics
-      \item higher-fidelity simulators - accurate contact dynamics, perception, env interaction
-      \item co-simulators (Idk what is it)
-      \item HIL and mixed reality
+  \item not monolithic because different concerns to test requires different modeling
+  \item ABMS
+  \item CAS components embodyment(?) --- physics dynamics becomes a critical aspect
+  \item currently it exists scalable multi-robot simulators - large population, simplified physics
+  \item higher-fidelity simulators - accurate contact dynamics, perception, env interaction
+  \item co-simulators (Idk what is it)
+  \item HIL and mixed reality
 \end{itemize}
 \subsection{The Reality Gap}
 \begin{itemize}
@@ -44,7 +74,11 @@ TODO
 \end{itemize}
 \subsection{Realism vs. Scalability}
 
-TODO
+\begin{itemize}
+  \item classic simulators focuses on scalability
+  \item alchemist(AC) and NetLogo(ABMS)
+  \item why realism should be focused
+\end{itemize}
 
 \section{Game Engines as Simulators}
 
@@ -52,7 +86,7 @@ TODO
   \item used particularly in robotics-oriented simulation
   \item used for digital twins
   \item can generate visually rich and complex environment effects
-  \item add what's below
+  \item what's below
 \end{itemize}
 
 Traditionally, the simulation of complex systems has been addressed through dedicated academic tools or agent-based modeling frameworks, often characterized by a high level of abstraction, but limited in their physical and spatial representation. In contrast, modern game engines integrate advanced physics engines, optimized rendering pipelines, scripting tools, and visual development environments, enabling the creation of high-fidelity three-dimensional environments in which autonomous agents can operate under realistic constraints.

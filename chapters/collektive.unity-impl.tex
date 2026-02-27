@@ -1,6 +1,6 @@
-\chapter{Implementation of Collektive⨯Unity}
+\chapter{Implementation of Collektivity}
 
-This chapters goes into details about what produced in the Collektive⨯Unity project. Here it will be exposed the detailed design of the application.
+This chapters goes into details about what produced in the Collektivity project. Here it will be exposed the detailed design of the application.
 
 \section{Design}
 
@@ -78,7 +78,7 @@ To follow the \ac{SRP} \cite{wiki_SRP} it has been created a helper component th
 
 From requirements `the system should allow users to define custom Collektive program without modifying the core integration library'. To honor that requirement the core collektive program (from now on `entrypoint') should be somehow injected into the engine, so that it can remain independent from the actual simulation it has being done. This inversion of control is achieved by injecting a lambda into the Engine constructor, as illustrated in Listing \ref{lst:entrypoint}. This allows the Engine to remain agnostic of the specific collective logic being executed.
 
-\lstinputlisting[float,language=Kotlin,label={lst:entrypoint}]{listings/entrypoint.kt}
+\lstinputlisting[float,language=Kotlin,label={lst:entrypoint}, caption={The entrypoint signature for the collective program in Collektivity.}]{listings/entrypoint.kt}
 
 The entrypoint serves as the primary abstraction layer for the simulation designer (i.e. the simulator user), providing a restricted scope where collective behaviors are defined without exposure to the underlying engine orchestration. By isolating this logic into a standalone lambda, the framework ensures that the simulation's behavioral rules remain decoupled from the communication and synchronization mechanics of the backend.
 
