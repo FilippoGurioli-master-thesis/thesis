@@ -2,7 +2,7 @@
 
 To contextualize the contributions of this thesis, it is necessary to establish the theoretical foundations upon which it is built. This chapter explores the evolution of distributed systems toward collective intelligence and examines the formalisms of self-organizing frameworks. By evaluating the limitations of current simulators, this chapter identifies the technical `reality gap' that this research aims to bridge, providing the necessary background to appreciate the integration of high-fidelity game engines into the decentralized coordination workflow.
 
-\section{Distributed Systems and Organizational Complexity}
+\section{Distributed Systems}
 
 The foundational definition of a distributed system is provided by Andrew S. Tanenbaum and Maarten Van Steen, who describe it as ``a collection of autonomous computing elements that appears to its users as a single coherent system''~\cite{Tanenbaum_Van_Steen_2001b}. This definition establishes a fundamental tension between the independent nature of the underlying hardware and the unified experience required by the end-user. To fully understand the implications of this paradigm, it is necessary to examine these two components individually.
 
@@ -19,13 +19,27 @@ A critical aspect of achieving this coherence is the management of failures. In 
 \paragraph{The Role of Middleware}
 To bridge the gap between autonomous nodes and the need for coherence, a \emph{middleware} layer is typically introduced~\cite{Bernstein_1996}. Middleware acts as an abstraction layer that sits between the operating system and the distributed application, providing a standardized interface for resource sharing and communication. By masking the differences in hardware and local software, middleware enables the development of complex distributed logic without requiring the programmer to manage low-level networking details. In the context of this research, \acp{CAS} and \acp{AC} frameworks can be viewed as specialized middleware designed to manage collective intelligence across high-density, pervasive networks.
 
-\subsection{\aclp{DS} Goals} \label{subsec:ds-goals}
+\subsection{\aclp{DS} Goals}
 
-sharing res, transparency, openness, scalability
+As cited in~\cref{chap:intro}, the necessity of \ac{DS} arose from the need of coordinating complex, geographically distributed nodes. In particular, the main goals of a \ac{DS} are
 
-\subsubsection{Distribution transparency}
+\begin{inlinelist}
+  \item supporting sharing of resources across the network;
+  \item hiding the network itself from the user;
+  \item be open;
+  \item easy scaling.
+\end{inlinelist}
 
+Building a \ac{DS} is not an easy task therefore these goals should be met in order to making it worth the effort.
+
+\paragraph{Sharing Resources}
+
+\paragraph{Distribution Transaprency}
 access, location, relocation, migration, replication, concurrency, failure
+
+\paragraph{Openness}
+
+\paragraph{Scalability}
 
 \subsection{\aclp{DS} Kinds}
 
