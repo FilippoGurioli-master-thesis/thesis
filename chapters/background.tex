@@ -143,88 +143,34 @@ To handle systems where multiple scales or domains overlap, the literature sugge
 
 Finally, to mitigate the `reality gap' (i.e. the discrepancy between simulated results and real-world performance) techniques such as \ac{HIL} and mixed reality are employed. In \ac{HIL} setups, part of the simulation is replaced by actual hardware components, allowing for the testing of real sensing and communication constraints while the rest of the environment remains virtual. These methods provide a path toward progressive realism, ensuring that self-organizing behaviors observed in a computer model remain robust when transitioned to physical reality~\cite{Sende2024}.
 
-\subsection{The Reality Gap}
-\begin{itemize}
-  \item moving from simulation to reality
-  \item increasingly detailed simulation
-  \item hardware-in-the-loop (part of the simulation substituted by real hardware)
-  \item mixed-reality
-\end{itemize}
 \subsection{Realism vs. Scalability}
+The tension between realism and scalability represents a fundamental design choice in the development of \ac{CAS} simulators. Classic simulators, which emerged primarily from the social sciences and distributed computing domains, often prioritize scalability to enable the study of population-level dynamics involving millions of entities. Tools such as NetLogo, a widely adopted platform for \ac{ABMS}, exemplify this approach by utilizing a `patch-based' environment where agents move across a grid of cells~\cite{DBLP:journals/simulation/LukeCPSB05}. While NetLogo is highly effective for exploring abstract emergent phenomena and educational models, its simplified spatial representation often ignores the complex physical constraints of real-world environments. Similarly, Alchemist is a high-performance simulator specifically designed for aggregate computing and pervasive systems~\cite{DBLP:conf/sac/PianiniVB15}. It excels in scalability by abstracting environmental interactions into meta-data and focusing on the efficient execution of the field calculus across vast networks, yet it typically operates with a simplified notion of agent embodiment.
 
-\begin{itemize}
-  \item classic simulators focuses on scalability
-  \item alchemist(AC) and NetLogo(ABMS)
-  \item why realism should be focused
-\end{itemize}
+The historical focus on scalability was driven by the need to validate the statistical properties of self-organizing algorithms. However, a growing segment of the literature argues that realism must be increasingly prioritized, particularly as \acp{CAS} are deployed in safety-critical robotic and \ac{IoT} applications. Realism is not merely a matter of visual fidelity; it involves the accurate reproduction of the `physics of interaction'~\cite{DBLP:journals/swarm/BrambillaFBD13}. When a simulation overlooks the nuances of signal interference, physical collisions, or the non-linear energy consumption of hardware, it risks producing `successful' results that fail catastrophically in the field.
+
+Focusing on realism is essential for identifying the boundary conditions of a collective's robustness. A self-healing gradient that works perfectly in a grid-based abstraction might oscillate or break when subjected to the real-world latency and packet loss characteristic of high-fidelity robotic simulators like Gazebo~\cite{DBLP:conf/iros/KoenigH04}. By acknowledging the realism/scalability trade-off, developers can choose the right tool for each stage of the engineering process: utilizing scalable tools like Alchemist for initial logic validation and high-fidelity simulators for final pre-deployment verification. This balanced approach ensures that the `whole-system' logic remains anchored in the physical realities of the individual devices.
 
 \section{Game Engines as Simulators}
 
-\begin{itemize}
-  \item used particularly in robotics-oriented simulation
-  \item used for digital twins
-  \item can generate visually rich and complex environment effects
-  \item what's below
-\end{itemize}
+Traditionally, the simulation of complex adaptive systems has been addressed through dedicated academic tools or agent-based modeling frameworks. While these are effective for high-level abstraction, they are often limited in their physical and spatial representation. In contrast, modern game engines integrate advanced physics engines, optimized rendering pipelines, and visual development environments, enabling the creation of high-fidelity three-dimensional environments where autonomous agents operate under realistic constraints. These platforms, including Unity, Unreal Engine and Godot, provide the fundamental technologies required for real-time graphics, physics, collision detection and networking~\cite{Coronado2023XRGameEngines}.
 
-Traditionally, the simulation of complex systems has been addressed through dedicated academic tools or agent-based modeling frameworks, often characterized by a high level of abstraction, but limited in their physical and spatial representation. In contrast, modern game engines integrate advanced physics engines, optimized rendering pipelines, scripting tools, and visual development environments, enabling the creation of high-fidelity three-dimensional environments in which autonomous agents can operate under realistic constraints.
+The relevance of game engines extends significantly beyond entertainment, particularly in the fields of robotics and cyber-physical systems. They offer several advantages over traditional academic tools, such as real-time 3D rendering for qualitative analysis and integrated physics engines capable of simulating realistic dynamics. Furthermore, these engines are increasingly adopted for digital-twin workflows, where a virtual replica is synchronized with a physical asset to balance visual immersion with model accuracy~\cite{Singh2025UnityGazeboDT}. This capability is central to addressing the reality gap, as game engines support high-fidelity perception and the generation of complex environmental effects that are essential for synthetic-data generation and the transfer of learned behaviors to the real world~\cite{DBLP:conf/fsr/ShahDLK17}.
 
-\subsection{What is a Game Engine}
+\subsection{Unity: Architecture and Core Concepts}
 
-A game engine is the core software of a video game or any other application that uses real-time graphics. It provides the fundamental technologies, simplifies the development process, and often allows the game to run on different platforms, such as consoles and computer operating systems. The main features typically offered by a game engine include a rendering system for 2D and 3D graphics, physics and collision detection, audio management, scripting, animations, artificial intelligence, networking and scene-graph management.
+The project developed in this thesis is built on Unity, a game engine created by Unity Technologies that is widely utilized in both industrial and academic contexts. Unity adopts a GameObject–Component architectural model, in which every entity within a scene is represented as a container object to which modular functional components are attached. This paradigm naturally lends itself to the modeling of collective systems, as each agent can be represented as a GameObject equipped with components that implement perception, communication and decision-making logic.
 
-Game engines often provide a suite of visual development tools in addition to reusable software components. These tools are generally provided in an integrated development environment to enable a simplified and rapid development of games in a data-driven manner~\cite{wiki_gameengine}.
+Within this framework, several fundamental concepts define the simulation structure. Scenes act as hierarchical containers that organize the environment, while Prefabs allow for the creation of reusable templates for agents. The behavior of these entities is governed by lifecycle methods, such as \monospace{Update()} and \monospace{FixedUpdate()}, which ensure that time-dependent behaviors remain consistent with the engine's update cycle~\cite{unity_manual}. Physical interaction is managed by an integrated 3D physics system based on the NVIDIA PhysX SDK. This engine provides a scalable framework for modeling actors and managing both direct and proximity-based interactions, allowing for the simulation of realistic physical behaviors and dynamic effects~\cite{unity_physics}.
 
-At present, Unity, Unreal Engine and Godot are the three most widely used options among the game development community.
+\subsection{Unity as a Platform for \aclp{CAS}}
 
-\subsection{Relevance of Game Engines Beyond Gaming}
+The decision to adopt Unity as the platform for this study is driven by its effective balance between simulation fidelity, architectural flexibility, and development speed. Unlike higher-fidelity engines that may impose significant tooling overhead, Unity provides a streamlined workflow for agent-based modeling and accurate spatial constraints. For aggregate computing, Unity is particularly attractive as a high-fidelity environment layer; it provides the realistic geometry and sensor interfaces while the aggregate runtime handles the collective logic and neighbor interactions.
 
-Adopting a game engine as a simulation platform offers several advantages over traditional academic tools.
-
-Provides real-time 3D rendering, which supports both qualitative analysis and debugging processes.
-It has integrated physics engines capable of simulating realistic dynamics.
-The visual development environment enables rapid prototyping and iterative design.
-Most popular game engines have a mature ecosystem of tools and plugins and also support for automated execution and batch processing.
-
-\subsection{Unity: Core Concepts and Functionalities}
-
-The project developed in this thesis is built on Unity, a game engine created by Unity Technologies and widely used in both industrial and academic contexts fig.\ref{fig:unity-editor}.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.75\linewidth]{figures/unity-editor.png}
-    \caption{The main view of the Unity Editor~\cite{unity_projectview}.}
-    \label{fig:unity-editor}
-\end{figure}
-
-Unity adopts a \emph{GameObject–Component} architectural model, in which every entity within a scene is represented as a container object to which modular components are attached. Behaviors are implemented through C\# scripts that interact with the engine’s update cycle.
-
-The fundamental concepts include:
-\begin{itemize}
-    \item \textbf{Scenes}: hierarchical object containers that define and organize the simulated environment.
-    \item \textbf{GameObject}: the basic entity of the simulation.
-    \item \textbf{Component}: functional modules that can be applyed to GameObjects (e.g., Transform, Rigidbody, Collider).
-    \item \textbf{Prefab}: reusable templates.
-    \item \textbf{Lifecycle methods}: methods such as \monospace{Update()} and \monospace{FixedUpdate()} that define time-dependent behavior~\cite{unity_manual}.
-\end{itemize}
-
-This paradigm naturally lends itself to the modeling of collective systems: each agent can be represented as a GameObject equipped with components that implement perception, communication, and decision-making behavior.
-
-Within this architectural framework, physical interaction and spatial dynamics are handled by Unity’s built-in 3D physics system, which is based on the integration of NVIDIA’s PhysX engine, developed in close collaboration with NVIDIA.
-
-The NVIDIA PhysX SDK is an open-source, scalable real-time physics engine designed to support advanced simulations, enabling more immersive gameplay through realistic physical behavior and dynamic real-time effects. It provides a framework for modeling 3D environments, allowing developers to create and remove physical entities (actors) and manage both direct and proximity-based interactions between them \cite{unity_physics}.
-
-\subsection{Unity as the Preferred Platform for This Study}
-
-The decision to adopt Unity as the platform for simulating the collective system explored in this thesis is driven by several considerations.
-
-Unity provides the capability for realistic three-dimensional simulation and integrates naturally with an agent-based modeling approach. It allows for the accurate representation of physical and spatial constraints, offers advanced visual debugging features, and supports automation and testing workflows, making it a highly suitable environment for this study.
-
-A comparison with Unreal Engine shows that, although the latter offers a more advanced graphics pipeline, Unity represents an effective balance between simulation fidelity, architectural flexibility, and development speed.
+This separation of concerns allows the engine to handle embodied dynamics and scene management, while the aggregate platform manages the `computational field' through a well-defined interface. By utilizing Unity, this study leverages advanced visual debugging and automated testing workflows, ensuring that the self-organizing behaviors observed in simulation are grounded in an environment that closely approximates the complexity of physical reality.
 
 \section{implications for aggregate-computing simulations}
-\begin{itemize}
-  \item exploited as high fidelity env
-  \item game engine responsible for sensors, actuators and neighborhood exchange
-  \item CAS responsible for neighbor interaction, distributed rounds and collective logic
-\end{itemize}
+The convergence of game engines and macro-programming models offers an architecture for the development and validation of \acp{CAS}. In this integrated landscape, game engines serve primarily as a high-fidelity environment layer, providing the realistic geometry, motion, and sensor/actuation interfaces necessary for embodied agents. Meanwhile, the aggregate programming runtime remains responsible for the core collective logic, including neighborhood interactions, the execution of asynchronous distributed rounds, and the evolution of computational fields.
+
+This architectural separation suggests a pragmatic integration strategy that leverages the strengths of both paradigms. The engine is tasked with managing the `physical' presence of the agents—handling rigid-body dynamics, collision detection and the synthesis of raw sensor data from the virtual world. Conversely, the aggregate platform operates at a higher level of abstraction, orchestrating the global behavior of the swarm or network. The bridge between these two layers is a well-defined interface responsible for three critical functions: sensing (transforming engine-level data into field inputs), actuation (translating field outputs into engine-level movements), and neighborhood exchange (utilizing the engine’s spatial queries to determine communication topology).
+
+By delegating environmental complexity to a game engine like Unity, researchers can focus on the resilience and correctness of the collective logic while operating in a space that closely mimics the `reality gap' found in physical deployments. This approach moves beyond the simplified grid-based or meta-data abstractions of classic simulators, providing a robust pathway for the engineering of situated systems where physical constraints can measurably impact the emergent outcome. The feasibility and limitations of this coupled approach provide the direct motivation for the integration of an aggregate programming implementation within the Unity ecosystem, as explored in the following chapters of this study.
