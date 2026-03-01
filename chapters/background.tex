@@ -100,10 +100,10 @@ The mathematical foundation of aggregate computing is the field calculus, a spec
 
 The syntax of the field calculus is built around four fundamental constructs that handle value definition, function application, state evolution and neighborhood interaction:
 \begin{itemize}
-\item Built-in and local operators: These represent standard values (numbers, booleans) and pure mathematical or local sensing operations.
-\item Function application: This allows for the functional composition of collective behaviors, where user-defined functions are applied across the field.
-\item Repetition (\monospace{rep}): This construct handles the evolution of state over time. It applies a function to the value from the device's previous computational round, enabling the creation of temporal patterns like timers or persistent states.
-\item Neighborhood interaction (\monospace{nbr}): This is the mechanism for spatial coordination. It gathers values from the most recent rounds of a device's neighbors, allowing the computation to adapt to the local physical topology~\cite{DBLP:journals/tocl/AudritoVDPB19}.
+\item Built-in and local operators: these represent standard values (numbers, booleans) and pure mathematical or local sensing operations.
+\item Function application: this allows for the functional composition of collective behaviors, where user-defined functions are applied across the field.
+\item Repetition (\monospace{rep}): this construct handles the evolution of state over time. It applies a function to the value from the device's previous computational round, enabling the creation of temporal patterns like timers or persistent states.
+\item Neighborhood interaction (\monospace{nbr}): this is the mechanism for spatial coordination. It gathers values from the most recent rounds of a device's neighbors, allowing the computation to adapt to the local physical topology~\cite{DBLP:journals/tocl/AudritoVDPB19}.
 \end{itemize}
 
 Through these constructs, aggregate computing can express a vast range of spatio-temporal patterns, including the spreading of information (G), the collection and aggregation of data (C) and local state transitions (T)~\cite{DBLP:journals/tomacs/ViroliABDP18}. These `GCT' building blocks form an \ac{API} that enhances raw \monospace{rep} and \monospace{nbr} calls, providing a higher-level language for resilient services like crowd estimation or emergency evacuation alerts.
