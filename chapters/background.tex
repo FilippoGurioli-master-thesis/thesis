@@ -22,14 +22,14 @@ To bridge the gap between autonomous nodes and the need for coherence, a \emph{m
 \subsection{\aclp{DS} Goals}
 
 As cited in~\cref{chap:intro}, the necessity of \ac{DS} arose from the need of coordinating complex, geographically distributed nodes. In particular, the main goals of a \ac{DS} are
-
+%
 \begin{inlinelist}
   \item supporting sharing of resources across the network;
   \item hiding the network itself from the user;
   \item be open;
   \item easy scaling.
 \end{inlinelist}
-
+%
 Building a \ac{DS} is not an easy task therefore these goals should be met in order to making it worth the effort.
 
 \paragraph{Sharing Resources}
@@ -72,13 +72,24 @@ The most recent evolution, and the one most pertinent to this research, is the r
 
 In pervasive environments, the traditional goals of distribution transparency must be re-evaluated. Because these nodes are often context-aware and physically embodied, their `location' is not a detail to be hidden, but a primary input for their logic. Furthermore, the inherent volatility of these networks, where nodes frequently join, leave or fail due to energy constraints, makes centralized management impossible. This shift from static, managed clusters to fluid, unmanaged environments provides the natural transition toward Self-Organizing Frameworks. To maintain a `single coherent system' view in such chaotic settings, we must move beyond simple middleware toward collective adaptive strategies that allow global behavior to emerge from local interactions.
 
-\section{Self-Organizing Frameworks}
-\begin{itemize}
-  \item use mirko slides
-  \item CAS charateristics
-  \item CAS behavior description (describe the whole, not the single)
-  \item possible solutions to CAS representation (macro-programming, find other ways)
-\end{itemize}
+\section{\aclp{CAS}}
+
+\aclp{CAS} represent a sophisticated class of decentralized architectures where global behavior emerges from the nonlinear interactions of numerous autonomous agents~\cite{holland1992adaptation}. Unlike traditional distributed systems that often rely on structured hierarchies or strict consensus protocols, a \ac{CAS} is defined by a large number of spatially situated devices that operate under a set of fundamental constraints. These include predominantly local interactions and a high degree of dynamism. This dynamism manifests as constant fluctuations in the environment and the network topology, often driven by agent mobility, hardware failures, or intermittent connectivity~\cite{DBLP:journals/csur/Casadei23}. Furthermore, these systems typically function in an open setting, an environment where components may appear or disappear over time without destabilizing the system's core utility~\cite{DBLP:journals/jlap/ViroliBDACP19}.
+
+A great challenge in the study of \ac{CAS} is the shift in perspective required to describe behavior. While traditional software engineering focuses on the `single', the desired outcomes in a \ac{CAS} are naturally expressed at the `whole' or collective level. Examples of such outcomes include the estimation of a spatial distribution, the formation of a self-healing geometric pattern, or the adaptive routing of information through a shifting region of space. The core difficulty lies in the gap between this global intent and the local execution; because the system is sensitive to its environment, minor changes in topology, device density, or message timing can lead to qualitatively different emergent outcomes~\cite{BealIEEEComputer2015}. Consequently, the behavior of a \ac{CAS} cannot be predicted by simply summing the individual parts, as the recursive feedback loops between agents create a system-wide complexity that transcends the logic of any single device.
+
+\subsection{Self-Organizing Frameworks}
+
+The engineering of self-organizing systems has led to a variety of frameworks aimed at narrowing the gap between local rules and global emergence. These frameworks generally fall into three categories: bio-inspired coordination models, virtual physics-based approaches, and general-purpose macro-programming languages. Each provides a different lens through which to represent and control the collective state of a \ac{CAS}.
+
+Bio-inspired frameworks often take cues from natural phenomena such as ant colony behavior or chemical gradients. One notable example is the use of \emph{stigmergy}, where agents interact indirectly by modifying their environment (for instance, through digital pheromones that guide other agents toward specific tasks or regions~\cite{DBLP:journals/computer/GardelliVZ08}). Similarly, chemical-inspired models like the \ac{CHAM} treat the system as a solution where floating molecules (data) interact according to fixed reaction rules, allowing global patterns to emerge from purely local, stochastic encounters~\cite{DBLP:journals/tcs/BerryB92}. These models are inherently robust to the arrival and departure of components, as the coordination logic is embedded in the environment rather than in a fixed network map.
+
+Virtual physics-based approaches, such as \ac{APF}, represent the collective by mapping agent interactions to physical forces. In this representation, goals exert attractive forces while obstacles or neighbors exert repulsive forces. The resulting behavior is a continuous movement toward a state of minimum energy, which naturally translates to tasks like collision avoidance or flocking~\cite{DBLP:journals/ijrr/Khatib86}. While highly effective for spatial coordination, these models can struggle with complex logical tasks that require discrete state transitions or symbolic reasoning across the entire network.
+
+A more recent shift toward addressing these limitations is found in formal macro-programming languages. For instance, the \ac{XC} provides a functional foundation where state and interaction are unified into a single primitive, allowing for a more general representation of collective processes that can spread, shrink, or move across a network~\cite{DBLP:journals/fgcs/CasadeiVAP24}. These frameworks move away from specific metaphors (like physics or biology) toward a more general-purpose computational logic.
+
+Among these solutions, \emph{aggregate programming} has emerged as a particularly comprehensive framework for spatially situated collectives. It leverages the abstraction of the \emph{computational field} to represent system-wide data as a continuous entity across space and time. By focusing on field transformations rather than individual message passing, it provides a mathematical and operational bridge to handle the inherent complexity of \acp{CAS}. This approach forms the basis for the subsequent discussion on aggregate computing and its role in modern distributed systems engineering.
+
 \subsection{Aggregate Computing}
 \begin{itemize}
   \item use mirko slides
