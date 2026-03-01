@@ -1,0 +1,62 @@
+TODO:
+
+General improvements:
+
+- write aknowledgements
+- write abstract
+- after chap 2 reader loses the red thread (reality gap). Start each chapter with a one-statement link: "having established the architecture in chapter 4, this chapter details its impl, with particular focus on the FFI bridge that addresses the performance constraint identified in section 1.2"
+- state clearly the difference between "Collektive", "Collektivity" and "Collektive backend"
+
+chapter 1:
+- state what I've created
+- create a roadmap in section 1.2 about following chapters
+- add image reality gap as a spectrum from abstract simulators to the physical hardware on the other, my contribution positioned in the middle (needs to create a statement to ref it)
+
+chapter 2:
+
+- correct typos (didn't understand what)
+- shrink 2.1.1 and 2.1.2 by 30% (maybe merge them in 1 subsec)
+- in 2.3.1 conjunction between formal calculus and pactical tooling must be improved (clarified)
+- "Alchemist is a high-perf sim... yet it typically operates with a simplified notion of agent embodiment needs a cite
+- rework 2.6 to not be conclusive, create a conclusion somewhere else and let that chapter adhere to the other standards
+- image of layered architecture of aggregate computing (field calculus -> GCT lib -> Tooling like ScaFi)
+- comparison table of simulators (NetLogo, Alchemist, ARGoS, Gazebo, Unity) across scalability, realism, physics fidelity and 3D support
+- image of sense-compute-act execution loop diagram
+
+chapter 3:
+
+- rephrase the opening sentence with "Building reliable research software on Unity requires overcoming its project-centric defaults. This chapter describes the automated development infrastructure created to address that challenge."
+- add a closing + summary that states how all these tooling satisfy these requirements
+- show a diagram of the repo structure
+- show the dir structure for the sandbox pattern
+- show CI/CD pipeline diagram
+
+chapter 4:
+
+- requirements: split simulation behavior and communication technology (now in the same section)
+- add a cite in 4.3.1 "logic in Kotlin would mean O(n^2)"
+
+chapter 5:
+
+- engine facade and network diagram are not consistent between each other
+- go more in depth about on why FlatBuffers has been discarded
+- the section of Unity Editor Customization feels standing alone, add a conjunction (supports reproducibility requirement)
+
+chapter 6:
+
+- state explicitely the expected outcome e.g. "we expect the swarm to converge at the source while dynamically routing around obstacles"
+- transform prose data about performance into a structured table
+- state the correctness: did it work as expected? add a qualitative (or better a quantitative) discussion
+
+chapter 7:
+
+- add a framing sentence: "the central question is whether FFI communication can sustain the 20Hz execution frequency required by aggregate computing"
+- when saying the numbers (450x, 700 times, ...) also add a ref to the row + col of the table
+- why 12 nodes? does the same statement hold for 100?
+- explain that in the box plot of python 1e8 ns means what it means
+- probably it is better to move chapter 6 results here instead of where they are currently
+
+chapter 8:
+
+- summary ok but didn't talk about what was learned and proven. what was the research question? waht did you find? what are the implications? what are the limitations?
+- go more in depth about sync/async both here and in the result chapter
