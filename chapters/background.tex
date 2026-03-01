@@ -90,13 +90,41 @@ A more recent shift toward addressing these limitations is found in formal macro
 
 Among these solutions, \emph{aggregate programming} has emerged as a particularly comprehensive framework for spatially situated collectives. It leverages the abstraction of the \emph{computational field} to represent system-wide data as a continuous entity across space and time. By focusing on field transformations rather than individual message passing, it provides a mathematical and operational bridge to handle the inherent complexity of \acp{CAS}. This approach forms the basis for the subsequent discussion on aggregate computing and its role in modern distributed systems engineering.
 
-\subsection{Aggregate Computing}
+\section{Aggregate Computing}
+
+Building on the broad landscape of self-organizing frameworks, aggregate computing offers a rigorous, functional approach to the engineering of spatially situated collectives. It is grounded in the `macro-programming' philosophy, which states that developers should describe the intended behavior of the aggregate as a single entity rather than hacking individual device solutions. This paradigm is centered on a declarative view of collective behavior, where the primary objective is to manage the flow of information across space and time.
+
+\subsection{Field Calculus and Global Semantics}
+
+The mathematical foundation of aggregate computing is the field calculus, a specialized $\lambda$-calculus~\cite{DBLP:journals/tocl/AudritoVDPB19} where every expression evaluates to a computational field. A computational field is the key abstraction of this paradigm; it can be viewed as a `spatial stream' or a space-time structure that maps a domain of events, representing a device firing at a specific time and position, to values~\cite{DBLP:journals/jlap/ViroliBDACP19}. By manipulating these fields through pure functions, developers can compose complex global patterns from simple, reusable building blocks.
+
+The syntax of the field calculus is built around four fundamental constructs that handle value definition, function application, state evolution and neighborhood interaction:
 \begin{itemize}
-  \item use mirko slides
-  \item field calculus
-  \item the program of the single (read local sensors and messages received, compute the shared aggregate program against the previous state (if any), produce a new state and a message to be sent to neighbors, send message to its neighbors)
-  \item split view between theory (continuous, correctness, composability) and tooling (discrete, reality)
+\item Built-in and local operators: These represent standard values (numbers, booleans) and pure mathematical or local sensing operations.
+\item Function application: This allows for the functional composition of collective behaviors, where user-defined functions are applied across the field.
+\item Repetition (\monospace{rep}): This construct handles the evolution of state over time. It applies a function to the value from the device's previous computational round, enabling the creation of temporal patterns like timers or persistent states.
+\item Neighborhood interaction (\monospace{nbr}): This is the mechanism for spatial coordination. It gathers values from the most recent rounds of a device's neighbors, allowing the computation to adapt to the local physical topology~\cite{DBLP:journals/tocl/AudritoVDPB19}.
 \end{itemize}
+
+Through these constructs, aggregate computing can express a vast range of spatio-temporal patterns, including the spreading of information (G), the collection and aggregation of data (C) and local state transitions (T)~\cite{DBLP:journals/tomacs/ViroliABDP18}. These `GCT' building blocks form an \ac{API} that enhances raw \monospace{rep} and \monospace{nbr} calls, providing a higher-level language for resilient services like crowd estimation or emergency evacuation alerts.
+
+\subsection{Operational Semantics and the Local Execution Loop}
+
+While the field calculus provides a global, denotational view of the system, its operational semantics define how this behavior is enacted on individual devices. In this model, the `program of the single' consists of repeatedly executing the shared aggregate program in asynchronous rounds. The local execution cycle follows a precise sequence:
+\begin{inlinelist}
+\item the device reads local sensor values and gathers the state trees (round results) received from its neighbors;
+\item the shared aggregate program is evaluated against the device's own previous state and the aligned neighbor trees;
+\item this evaluation produces a new local state and a message containing the updated state tree, which is then broadcast to neighbors~\cite{DBLP:journals/jlap/ViroliBDACP19}.
+\end{inlinelist}
+
+This local loop ensures that the collective behavior is self-organizing and resilient. Because each device evaluates its state `against' its neighbors, the system can tolerate message loss and varying round frequencies by construction. The operational details remain orthogonal to the macro-program, allowing the same specification to be deployed across diverse infrastructures.
+
+\subsection{The Layered Architecture: Theory and Tooling}
+
+Aggregate computing organizes its research and application into a clear layered structure that separates formal theory from practical execution. At the lowest level, the formal field calculus provides the necessary mathematical rigor to reason about the correctness and self-stabilization of collective behaviors. This theoretical foundation ensures that, given a stable environment and topology, a field computation will result in a unique, stable output in finite time~\cite{DBLP:conf/saso/ViroliBDP15}.
+
+Above the formal core, a layer of reusable libraries (such as the GCT-set) provides the engineering `bricks' needed to build complex applications. Finally, the tooling layer consists of domain-specific languages like \emph{ScaFi} (a Scala-based DSL~\cite{DBLP:journals/softx/CasadeiVAP22}) and specialized execution platforms or simulators like \emph{Alchemist}~\cite{DBLP:conf/sac/PianiniVB15}. This separation is crucial for managing the `reality gap' in \ac{CAS}; while the developer works with the clean abstractions of the calculus and libraries, the runtime and simulators handle the discrete, often unpredictable nature of real-world sensing and communication. This layered view allows aggregate computing to tackle the true issue of \ac{CAS}: by fully escaping the single `device' abstraction to program the `whole'.
+
 \section{Simulation Landscape}
 \begin{itemize}
   \item what is simulation
