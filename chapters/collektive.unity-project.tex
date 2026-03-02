@@ -4,7 +4,7 @@ This chapter faces the core research project produced for this thesis: a simulat
 
 \section{Goal}
 
-The project goal is to bridge the Unity game engine with the aggregate computing library named Collektive.
+The project goal is to bridge the Unity game engine with the \ac{AC} library named Collektive.
 
 This communication should be bidirectional, achieve high performance and enable huge customization.
 
@@ -111,7 +111,7 @@ The architectural design of this bridge was shaped by a shift in how the simulat
 To resolve this, the architecture was refactored from a monolithic application into a Unity Package. This shift leverages the Unity Editor as the primary configuration interface rather than a mere rendering target. By distributing the backend and bridge as a modular library, the user can utilize Unity’s native tooling to define simulation parameters, modify environment geometry, and inspect node states in real-time. Consequently, the project functions as an extensible framework that transforms a standard Unity project into a specialized \ac{CAS} simulator.
 
 \paragraph{Delegated Neighborhood Discovery}
-A critical architectural decision was the delegation of spatial logic to the Unity environment. In aggregate computing, determining network topology is fundamental. If this logic were handled in the Kotlin backend, every simulation tick would require an $O(n^2)$ complexity check to evaluate node proximity.
+A critical architectural decision was the delegation of spatial logic to the Unity environment. In \ac{AC}, determining network topology is fundamental. If this logic were handled in the Kotlin backend, every simulation tick would require an $O(n^2)$ complexity check to evaluate node proximity.
 
 By moving discovery to Unity, the system exploits the engine's highly optimized physics engine and pre-baked spatial partitioning (e.g., grids or Octrees). This allows for efficient neighborhood calculations using native features like Colliders or Raycasting, ensuring the backend remains a pure logic engine that receives a pre-calculated adjacency list.
 
@@ -132,7 +132,7 @@ The primary challenge lay in the program's input and output, which are both gene
 
 \subsubsection{Unity Parser}
 
-While the Collektive Parser handles the logic-side data mapping, the Unity Parser translates these definitions into the engine's entity-based structures. Unity operates on an \ac{ECS} inspired architecture, where the state of any object is defined by its collection of attached components. To bridge this with the aggregate computing domain, the \textit{Unity Parser} is implemented as a specialized component responsible for bidirectional data translation.
+While the Collektive Parser handles the logic-side data mapping, the Unity Parser translates these definitions into the engine's entity-based structures. Unity operates on an \ac{ECS} inspired architecture, where the state of any object is defined by its collection of attached components. To bridge this with the \ac{AC} domain, the \textit{Unity Parser} is implemented as a specialized component responsible for bidirectional data translation.
 
 At the scene level, a central \textit{Simulation Orchestrator} component serves as the gateway. This entity enhances a standard Unity scene into an active simulation environment by managing the communication channel's lifecycle. It interfaces directly with the \textit{Core Bridge}, utilizing the \ac{IDL} to serialize the environmental state and deserialize incoming commands from the Collektive back-end.
 
