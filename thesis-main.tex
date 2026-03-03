@@ -82,7 +82,13 @@
 \frontmatter\frontispiece
 
 \begin{abstract}
-	Max 2000 characters, strict.
+Modern computing increasingly relies on \ac{CAS} that is large ensembles of autonomous agents whose collective behavior emerges from local interactions. \ac{AC} provides a rigorous framework for programming such systems, yet validating \ac{AC} algorithms before physical deployment remains challenging. Classical simulators prioritize scalability but sacrifice physical realism, while high-fidelity robotic simulators are computationally expensive and poorly suited to \ac{AC} workflows. This mismatch, the reality gap, risks producing algorithms that succeed in simulation but fail in the field.
+
+This thesis presents Collektivity, a 3D simulator for \ac{CAS} that bridges the Unity game engine with Collektive, a Kotlin-based \ac{AC} library. Unity supplies realistic physics, collision detection and spatial partitioning, while Collektive handles aggregate logic. The two runtimes communicate through a \ac{FFI} layer with Protocol Buffers as the shared data model. To support Collektivity as a distributable library, a Unity Package Template was also developed, integrating continuous integration, automated semantic versioning, static analysis and artifact signing.
+
+A benchmark comparing \ac{FFI} against socket-based communication showed that \ac{FFI} is on average 450 times faster, with worst-case speedups exceeding 700 times, enabling the $20Hz$ execution frequency required by \ac{AC}. A case study in environment-aware gradient ascent validated the integration across a minimal and a high-fidelity 3D environment, sustaining real-time performance with 100 nodes on consumer hardware.
+
+These results demonstrate that game engines are viable high-fidelity platforms for \ac{CAS} validation, concretely narrowing the reality gap between algorithmic design and physical deployment.
 \end{abstract}
 
 \begin{dedication} % this is optional
@@ -111,7 +117,16 @@
 \bibliography{bibliography}
 
 \begin{acknowledgements} % this is optional
-	Optional. Max 1 page.
+This thesis is the result of a journey that would not have been possible without the support of several remarkable people.
+
+I would like to express my sincere gratitude to my supervisor, Prof. Danilo Pianini, whose guidance was both technically sharp and genuinely encouraging. His ability to challenge ideas while maintaining enthusiasm for the research made this work considerably better than it would have been otherwise.
+
+I am equally grateful to my co-supervisors, Martina Baiardi and Angela Cortecchia, for their patience, availability, and the depth of feedback they offered throughout the project. Cortecchia's prior work on Collektive was the direct foundation upon which this thesis was built, and her insights into the library were invaluable.
+
+A special thank you goes to my girlfriend, Silvia. Being a software engineer herself, she contributed to this work in ways that go far beyond emotional support: reading drafts, discussing architectural choices and keeping my thinking honest when it needed to be. Having someone who genuinely understands both the technical difficulties and the human cost of a thesis and who stayed close through all of it, made an enormous difference.
+
+Finally, I want to thank my family. Their unconditional support has been the constant beneath everything I do. This work is dedicated also to them.
+
 \end{acknowledgements}
 
 \end{document}

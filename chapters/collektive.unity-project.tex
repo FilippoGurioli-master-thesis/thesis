@@ -115,7 +115,7 @@ The integration is designed as a modular bridge between Unity and Collektive, fa
 
 Before detailing the individual components, it is necessary to outline the core architectural decisions that ensure the system's scalability and flexibility.
 
-\paragraph{From Application to Package}
+\paragraph{From Application to Package} \label{par:archi-app2package}
 The architectural design of this bridge was shaped by a shift in how the simulation environment is hosted. Early design iterations focused on developing a standalone simulation application. However, this approach led to a redundant replication of complex features already native to the Unity Editor, such as spatial partitioning, inspector-based configuration, and asset management.
 
 To resolve this, the architecture was refactored into a Unity Package—directly leveraging the Unity Package Template developed as the first deliverable of this thesis (Chapter~\ref{chap:unity_package_template})—rather than remaining a monolithic application. This shift treats the Unity Editor as the primary configuration interface rather than a mere rendering target. By distributing the backend and bridge as a modular library, the user can utilize Unity's native tooling to define simulation parameters, modify environment geometry, and inspect node states in real-time. Consequently, the project functions as an extensible framework that transforms any standard Unity project into a specialized \ac{CAS} simulator.
