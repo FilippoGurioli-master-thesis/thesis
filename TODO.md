@@ -3,8 +3,8 @@
 
 ## 🔴 Blockers (must be done before submission)
 
-- [ ] **Write Abstract** — max 2000 characters. Should cover: problem (reality gap), method (Collektive + Unity via FFI), contribution (Collektivity toolchain + Unity Package Template), key result (FFI is ~450× faster than sockets, 100-node real-time simulation achieved).
-- [ ] **Write Acknowledgements** — max 1 page. Currently a placeholder.
+- [x] **Write Abstract** — max 2000 characters. Should cover: problem (reality gap), method (Collektive + Unity via FFI), contribution (Collektivity toolchain + Unity Package Template), key result (FFI is ~450× faster than sockets, 100-node real-time simulation achieved).
+- [x] **Write Acknowledgements** — max 1 page. Currently a placeholder.
 - [x] **Fix broken cross-reference** in §3.1 — `??` appears where a chapter reference should be (likely referring to Chapter 4).
 
 ---
@@ -22,10 +22,7 @@
 
 ## Chapter 1 — Introduction
 
-- [ ] **State contributions explicitly** — Add a bullet-pointed or numbered list of the thesis's concrete deliverables (Unity Package Template, Collektivity toolchain, FFI benchmark, case study).
-- [ ] **Add §1.2 Roadmap** — One paragraph describing the structure of remaining chapters and what the reader will find in each.
 - [ ] **Add "reality gap spectrum" figure** — A horizontal diagram showing a spectrum from *abstract simulators* (NetLogo, Alchemist) on the left to *physical hardware* on the right, with Collektivity positioned in the middle. Add a label/caption and a forward reference to it from the introduction text.
-- [ ] **Add a numbered research question or hypothesis** — e.g., *"RQ: Can a game-engine-based integration sustain the execution frequency required by aggregate computing while providing physics-accurate environmental interaction?"* This gives Ch.8 something concrete to answer.
 
 ---
 
