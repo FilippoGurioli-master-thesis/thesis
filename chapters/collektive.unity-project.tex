@@ -2,6 +2,22 @@
 
 This chapter faces the core research project produced for this thesis: a simulator for 3D \ac{CAS}.
 
+TODO ------------------------------------------------------------------------
+
+\subsection{Unity: Architecture and Core Concepts}
+
+The project developed in this thesis is built on Unity, a game engine created by Unity Technologies that is widely utilized in both industrial and academic contexts. Unity adopts a GameObject–Component architectural model, in which every entity within a scene is represented as a container object to which modular functional components are attached. This paradigm naturally lends itself to the modeling of collective systems, as each agent can be represented as a GameObject equipped with components that implement perception, communication and decision-making logic.
+
+Within this framework, several fundamental concepts define the simulation structure. Scenes act as hierarchical containers that organize the environment, while Prefabs allow for the creation of reusable templates for agents. The behavior of these entities is governed by lifecycle methods, such as \monospace{Update()} and \monospace{FixedUpdate()}, which ensure that time-dependent behaviors remain consistent with the engine's update cycle~\cite{unity_manual}. Physical interaction is managed by an integrated 3D physics system based on the NVIDIA PhysX SDK. This engine provides a scalable framework for modeling actors and managing both direct and proximity-based interactions, allowing for the simulation of realistic physical behaviors and dynamic effects~\cite{unity_physics}.
+
+\subsection{Unity as a Platform for \aclp{CAS}}
+
+The decision to adopt Unity as the platform for this study is driven by its effective balance between simulation fidelity, architectural flexibility, and development speed. Unlike higher-fidelity engines that may impose significant tooling overhead, Unity provides a streamlined workflow for agent-based modeling and accurate spatial constraints. For \ac{AC}, Unity is particularly attractive as a high-fidelity environment layer; it provides the realistic geometry and sensor interfaces while the aggregate runtime handles the collective logic and neighbor interactions.
+
+This separation of concerns allows the engine to handle embodied dynamics and scene management, while the aggregate platform manages the `computational field' through a well-defined interface. By utilizing Unity, this study leverages advanced visual debugging and automated testing workflows, ensuring that the self-organizing behaviors observed in simulation are grounded in an environment that closely approximates the complexity of physical reality.
+
+TODO ------------------------------------------------------------------------
+
 \section{Goal}
 
 The project goal is to bridge the Unity game engine with the \ac{AC} library named Collektive.

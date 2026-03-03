@@ -24,10 +24,10 @@ To bridge the gap between autonomous nodes and the need for coherence, a \emph{m
 The main goals of a \ac{DS} are
 %
 \begin{inlinelist}
-  \item supporting sharing of resources across the network;
-  \item hiding the network itself from the user;
-  \item be open;
-  \item easy scaling.
+	\item supporting sharing of resources across the network;
+	\item hiding the network itself from the user;
+	\item be open;
+	\item easy scaling.
 \end{inlinelist}
 %
 Building a \ac{DS} is not an easy task therefore these goals should be met in order to making it worth the effort.
@@ -90,7 +90,7 @@ A more recent shift toward addressing these limitations is found in formal macro
 
 Among these solutions, \emph{aggregate programming} has emerged as a particularly comprehensive framework for spatially situated collectives. It leverages the abstraction of the \emph{computational field} to represent system-wide data as a continuous entity across space and time. By focusing on field transformations rather than individual message passing, it provides a mathematical and operational bridge to handle the inherent complexity of \acp{CAS}. This approach forms the basis for the subsequent discussion on \ac{AC} and its role in modern distributed systems engineering.
 
-\section{\acp{AC}}
+\section{\acl{AC}}
 
 Building on the broad landscape of self-organizing frameworks, \ac{AC} offers a rigorous, functional approach to the engineering of spatially situated collectives. It is grounded in the `macro-programming' philosophy, which states that developers should describe the intended behavior of the aggregate as a single entity rather than hacking individual device solutions. This paradigm is centered on a declarative view of collective behavior, where the primary objective is to manage the flow of information across space and time.
 
@@ -100,10 +100,10 @@ The mathematical foundation of \ac{AC} is the field calculus, a specialized $\la
 
 The syntax of the field calculus is built around four fundamental constructs that handle value definition, function application, state evolution and neighborhood interaction:
 \begin{itemize}
-\item Built-in and local operators: these represent standard values (numbers, booleans) and pure mathematical or local sensing operations.
-\item Function application: this allows for the functional composition of collective behaviors, where user-defined functions are applied across the field.
-\item Repetition (\monospace{rep}): this construct handles the evolution of state over time. It applies a function to the value from the device's previous computational round, enabling the creation of temporal patterns like timers or persistent states.
-\item Neighborhood interaction (\monospace{nbr}): this is the mechanism for spatial coordination. It gathers values from the most recent rounds of a device's neighbors, allowing the computation to adapt to the local physical topology~\cite{DBLP:journals/tocl/AudritoVDPB19}.
+	\item Built-in and local operators: these represent standard values (numbers, booleans) and pure mathematical or local sensing operations.
+	\item Function application: this allows for the functional composition of collective behaviors, where user-defined functions are applied across the field.
+	\item Repetition (\monospace{rep}): this construct handles the evolution of state over time. It applies a function to the value from the device's previous computational round, enabling the creation of temporal patterns like timers or persistent states.
+	\item Neighborhood interaction (\monospace{nbr}): this is the mechanism for spatial coordination. It gathers values from the most recent rounds of a device's neighbors, allowing the computation to adapt to the local physical topology~\cite{DBLP:journals/tocl/AudritoVDPB19}.
 \end{itemize}
 
 Through these constructs, \ac{AC} can express a vast range of spatio-temporal patterns, including the spreading of information (G), the collection and aggregation of data (C) and local state transitions (T)~\cite{DBLP:journals/tomacs/ViroliABDP18}. These `GCT' building blocks form an \ac{API} that enhances raw \monospace{rep} and \monospace{nbr} calls, providing a higher-level language for resilient services like crowd estimation or emergency evacuation alerts.
@@ -112,9 +112,9 @@ Through these constructs, \ac{AC} can express a vast range of spatio-temporal pa
 
 While the field calculus provides a global, denotational view of the system, its operational semantics define how this behavior is enacted on individual devices. In this model, the `program of the single' consists of repeatedly executing the shared aggregate program in asynchronous rounds. The local execution cycle follows a precise sequence:
 \begin{inlinelist}
-\item the device reads local sensor values and gathers the state trees (round results) received from its neighbors;
-\item the shared aggregate program is evaluated against the device's own previous state and the aligned neighbor trees;
-\item this evaluation produces a new local state and a message containing the updated state tree, which is then broadcast to neighbors~\cite{DBLP:journals/jlap/ViroliBDACP19}.
+	\item the device reads local sensor values and gathers the state trees (round results) received from its neighbors;
+	\item the shared aggregate program is evaluated against the device's own previous state and the aligned neighbor trees;
+	\item this evaluation produces a new local state and a message containing the updated state tree, which is then broadcast to neighbors~\cite{DBLP:journals/jlap/ViroliBDACP19}.
 \end{inlinelist}
 
 This local loop ensures that the collective behavior is self-organizing and resilient. Because each device evaluates its state `against' its neighbors, the system can tolerate message loss and varying round frequencies by construction. The operational details remain orthogonal to the macro-program, allowing the same specification to be deployed across diverse infrastructures.
@@ -156,19 +156,28 @@ Traditionally, the simulation of \aclp{CAS} has been addressed through dedicated
 
 The relevance of game engines extends significantly beyond entertainment, particularly in the fields of robotics and cyber-physical systems. They offer several advantages over traditional academic tools, such as real-time 3D rendering for qualitative analysis and integrated physics engines capable of simulating realistic dynamics. Furthermore, these engines are increasingly adopted for digital-twin workflows, where a virtual replica is synchronized with a physical asset to balance visual immersion with model accuracy~\cite{Singh2025UnityGazeboDT}. This capability is central to addressing the reality gap, as game engines support high-fidelity perception and the generation of complex environmental effects that are essential for synthetic-data generation and the transfer of learned behaviors to the real world~\cite{DBLP:conf/fsr/ShahDLK17}.
 
+\subsection{Comparative Analysis of Modern Game Engines}
+
+The adoption of game engines as simulators for \acp{CAS} requires an evaluation of how each platform balances graphical fidelity, computational scalability and the ability to model decentralized interactions. Currently, the landscape is defined by three primary engines: Unreal Engine, Godot and Unity, each offering distinct paradigms for representing and managing spatial environments.
+
+\paragraph{Unreal Engine} is widely recognized for its high-fidelity visual representation, utilizing technologies such as \emph{Lumen} for dynamic global illumination and \emph{Nanite} for virtualized geometry. While these features are highly effective for simulations where high-resolution environmental perception is required, the engine's architecture is centered around a complex C++ framework and a relatively high memory footprint. This `heavyweight' nature can introduce significant overhead in scenarios involving massive populations of autonomous entities, where the computational budget is often prioritized for logic and collective coordination rather than photorealistic rendering.
+
+\paragraph{Godot} has emerged as a significant open-source alternative, favored for its lightweight footprint and permissive MIT licensing. Its architecture is based on a hierarchical `Scene and Node' model, which offers high transparency for researchers who may need to modify the underlying engine source code to implement custom simulation kernels. While Godot 4 has introduced improvements in 3D physics stability and performance, it still lacks the extensive ecosystem of third-party middleware and mature integration bridges often required to connect the simulation environment with external coordination languages or distributed computing frameworks.
+
+\paragraph{Unity} occupies a strategic position in the state of the art, characterized by a balance between professional-grade rendering and a highly modular C\# scripting environment. Unlike Unreal, which prioritizes `out-of-the-box' cinematic realism, Unity provides a flexible pipeline where physics, networking and spatial indexing can be finely tuned to suit the requirements of a specific research model. This adaptability has raised a vast repository of verified libraries for spatial partitioning, neighbor discovery and custom messaging protocols, elements that are essential for modeling the local interactions inherent in aggregate systems. Furthermore, its ability to easily interface with external .NET libraries makes it a robust candidate for simulations that require a strict separation between 3D spatial representation and high-level collective logic.
+
+Given Unity's prevalence as a versatile middleware for bridging physical environments with sophisticated agent behaviors, a detailed examination of its internal architecture is necessary to understand how it supports the simulation of large-scale, spatially-aware systems.
+
 \subsection{Unity: Architecture and Core Concepts}
 
-The project developed in this thesis is built on Unity, a game engine created by Unity Technologies that is widely utilized in both industrial and academic contexts. Unity adopts a GameObject–Component architectural model, in which every entity within a scene is represented as a container object to which modular functional components are attached. This paradigm naturally lends itself to the modeling of collective systems, as each agent can be represented as a GameObject equipped with components that implement perception, communication and decision-making logic.
+The Unity engine is built upon a modular, component-based architecture that favors composition over the rigid hierarchies of traditional object-oriented inheritance. At the foundation of this structure is the \emph{GameObject}, which serves as a fundamental container for all entities within a scene. In isolation, a \emph{GameObject} possesses no inherent behavior or data beyond its existence in the engine's internal registry; its functionality is instead defined by the various \emph{Components} attached to it. This design allows for high degrees of flexibility, as a single entity can simultaneously possess a \emph{Transform} component for spatial positioning, a \textit{Rigidbody} for physical properties and various user-defined scripts for behavioral logic.
 
-Within this framework, several fundamental concepts define the simulation structure. Scenes act as hierarchical containers that organize the environment, while Prefabs allow for the creation of reusable templates for agents. The behavior of these entities is governed by lifecycle methods, such as \monospace{Update()} and \monospace{FixedUpdate()}, which ensure that time-dependent behaviors remain consistent with the engine's update cycle~\cite{unity_manual}. Physical interaction is managed by an integrated 3D physics system based on the NVIDIA PhysX SDK. This engine provides a scalable framework for modeling actors and managing both direct and proximity-based interactions, allowing for the simulation of realistic physical behaviors and dynamic effects~\cite{unity_physics}.
+The execution of logic within the engine is governed by a specialized lifecycle often referred to as the game loop, which maintains a strict separation between physical calculations and visual rendering. The engine utilizes a \monospace{FixedUpdate} phase, which occurs at a consistent, user-defined temporal interval ($\Delta t$) that remains independent of the variable frame rate. By decoupling the physics simulation from the rendering pipeline, the engine ensures that collision detection and rigid-body dynamics remain consistent across different hardware configurations and performance profiles.
 
-\subsection{Unity as a Platform for \aclp{CAS}}
-
-The decision to adopt Unity as the platform for this study is driven by its effective balance between simulation fidelity, architectural flexibility, and development speed. Unlike higher-fidelity engines that may impose significant tooling overhead, Unity provides a streamlined workflow for agent-based modeling and accurate spatial constraints. For \ac{AC}, Unity is particularly attractive as a high-fidelity environment layer; it provides the realistic geometry and sensor interfaces while the aggregate runtime handles the collective logic and neighbor interactions.
-
-This separation of concerns allows the engine to handle embodied dynamics and scene management, while the aggregate platform manages the `computational field' through a well-defined interface. By utilizing Unity, this study leverages advanced visual debugging and automated testing workflows, ensuring that the self-organizing behaviors observed in simulation are grounded in an environment that closely approximates the complexity of physical reality.
+Following the completion of the physics step, the engine enters the \monospace{Update} phase. This stage is used for per-frame logic, such as processing user input or updating non-physics-related states, before the final data is passed to the rendering engine to be drawn to the screen. This cyclical execution ensures that state changes are processed in a predictable order, allowing for a synchronized environment where multiple independent entities can interact within a shared spatial and temporal context.
 
 \section{Implications for \acl{AC} Simulations}
+
 The convergence of game engines and macro-programming models offers an architecture for the development and validation of \acp{CAS}. In this integrated landscape, game engines serve primarily as a high-fidelity environment layer, providing the realistic geometry, motion, and sensor/actuation interfaces necessary for embodied agents. Meanwhile, the aggregate programming runtime remains responsible for the core collective logic, including neighborhood interactions, the execution of asynchronous distributed rounds, and the evolution of computational fields.
 
 This architectural separation suggests a pragmatic integration strategy that leverages the strengths of both paradigms. The engine is tasked with managing the `physical' presence of the agents—handling rigid-body dynamics, collision detection and the synthesis of raw sensor data from the virtual world. Conversely, the aggregate platform operates at a higher level of abstraction, orchestrating the global behavior of the swarm or network. The bridge between these two layers is a well-defined interface responsible for three critical functions: sensing (transforming engine-level data into field inputs), actuation (translating field outputs into engine-level movements), and neighborhood exchange (utilizing the engine’s spatial queries to determine communication topology).
