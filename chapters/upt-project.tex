@@ -2,10 +2,15 @@
 
 The mismatch between professional software engineering standards and the project-centric nature of the Unity Editor required the deliberate creation of this production-ready architecture. The environment's dependability is crucial in a research-focused setting such as the \ac{CAS} simulator; if the underlying framework is non-deterministic or prone to human configuration errors, the validity of the data produced is compromised. The emphasis was moved from handling Unity's peculiar project structures to a modular, package-oriented approach by designing a `template-first' methodology. by treating the simulator as a high-integrity library rather than a single executable, this methodology makes sure that the core functionality is independent of the particular Unity version or project parameters being used for visualization.
 
+\section{Problem statement}
+
+The Unity development ecosystem is characterized by a vast but fragmented community where standardized best practices are frequently bypassed in favor of `start-and-go' prototyping. This lack of architectural rigor often results in partially functional resources and unreliable documentation, which undermines the development of high-reliability software. To address these deficiencies, it is necessary to establish a novel foundational framework that diverges from traditional methods. This starting point must integrate modern DevOps principles, such as continuous integration and automated quality assurance, tailored specifically to the constraints of the Unity domain. The objective is to provide a generic yet formally structured template that ensures technical consistency from the project's inception.
+
+Preliminary research indicates that during the development of complex simulators, many essential features require direct interaction with the Unity Editor's internal systems rather than just the runtime environment. Consequently, the proposed solution shifts the focus from producing a standalone `executable game' to developing a sophisticated `asset' or `package'. By delivering the simulator as an integrated asset meant for use within the Unity Editor, the system achieves a higher degree of flexibility and utility. This approach ensures that the final simulator is not merely a monolithic file, but a modular, production-ready library that enhances the development of subsequent simulation-specific projects.
+
 \section{Objective/Goal}
 
-TODO
-Insert what you want to obtain with this product, what are the implications and criticalities.
+The project goal is to develop a standardized, production-ready Unity package template that integrates modern DevOps principles and Editor-centric architecture to overcome the reliability and fragmentation issues inherent in traditional `start-and-go' development workflows.
 
 \section{Requirements}
 
@@ -68,10 +73,19 @@ Requirements for this project are split into separated categories. It aims at su
 	\item Setup failure must be `loud' and diagnostic, providing clear error messages when prerequisites are missing.
 \end{itemize}
 
-\section{Motivation}
+\section{Project Architecture and Structural Organization}
 
-TODO
-Expalin WHY this product is needed, its architecture and integration with the unity world. Add an image.
+The primary architectural challenge resided in reconciling the standard \ac{UPM} directory structure with the functional requirements of the Unity Editor. By design, the Unity Editor is engineered to interface with full project structures rather than isolated packages. While the official documentation suggests developing packages directly within a project's \monospace{Packages} directory, this approach leads to a tightly coupled repository where the distributable asset and the development environment are inextricably linked, complicating version control and dependency management.
+
+To overcome this limitation, the architecture of this template adopts a decoupled development-sandbox model. This pattern leverages Unity’s ability to resolve local dependencies via file system paths within the \monospace{manifest.json}. As illustrated in~\cref{fig:utp-dir.png}, the production-ready package resides in an autonomous directory, while a secondary \emph{Sandbox} environment serves as the entry point for the Unity Editor. This separation ensures that the package remains a clean, modular entity, while the Sandbox provides a volatile, yet fully functional, spatial context for iterative testing and Editor-side development.
+
+\fig{utp-dir.png}{Unity-Package-Template directory structure.}
+
+\subsection{Automation and Task Orchestration}
+
+As the project’s complexity increased, the initial reliance on a fragmented collection of Bash scripts proved insufficient for maintaining a reliable development lifecycle. To ensure architectural integrity and take advantage of a robust type system, the automation layer was refactored into a structured C\# scripting suite. By utilizing the \monospace{dotnet-script} toolchain~\cite{dotnet_script_2026}, the project achieves high-level logic consistency across its build and maintenance tasks.
+
+These scripts are encapsulated within the \monospace{.automation} directory, abstracting the underlying complexity of the DevOps pipeline. To maintain a low barrier to entry and fulfill the requirement for a `single-action' setup, a lightweight \monospace{init.sh} bootstrap script is provided. This entry point orchestrates the execution of the C\# automation suite, handling environment verification and project initialization through a single command-line interface. This transition from imperative shell scripting to a compiled scripting language significantly enhances the maintainability and scalability of the project's internal tooling.
 
 \section{Features and Tooling}
 

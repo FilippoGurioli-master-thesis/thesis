@@ -1,5 +1,11 @@
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{newunicodechar}
+
+\newunicodechar{├}{\ensuremath{\vdash}}
+\newunicodechar{└}{\ensuremath{\llcorner}}
+\newunicodechar{│}{\ensuremath{|}}
+\newunicodechar{─}{\ensuremath{-}}
 
 %-----------------------------------------------------
 % LISTING CONFIGURATIONS
@@ -49,4 +55,11 @@
 	morestring=[s]{"""*}{*"""},
   ndkeywords={},
 	sensitive=true
+}
+
+\lstdefinelanguage{bash}{
+  morekeywords={cd, ls, git, npm, node, mkdir, rm, cp, mv, echo, cat, touch, tree},
+  sensitive=true,
+  morecomment=[l]{\#},
+  morestring=[b]",
 }
