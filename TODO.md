@@ -58,19 +58,19 @@
 
 ## Chapter 6 — Case Study
 
-- [ ] **State expected outcome explicitly** — Add at the start of §6.1: *"We expect the swarm to converge on the source while dynamically routing around obstacles; the collective gradient should propagate correctly across all nodes within a finite number of rounds."*
-- [ ] **Add correctness discussion** — After presenting the screenshots, add a paragraph: did the swarm behave as expected? Did the gradient converge? Were there any failure modes observed? Even a qualitative statement counts.
-- [ ] **Convert performance prose into a structured table** — Replace the scattered sentences about node counts and GPU requirements with a 2-column table (Hardware / Max nodes @ >30 FPS) for both minimal and rich environments.
-- [ ] *(Optional, recommended)* **Move quantitative results to Ch.7** — The frame-rate/node-count performance data belongs alongside the FFI benchmark for a unified results chapter.
+- [x] **State expected outcome explicitly** — Add at the start of §6.1: *"We expect the swarm to converge on the source while dynamically routing around obstacles; the collective gradient should propagate correctly across all nodes within a finite number of rounds."*
+- [x] **Add correctness discussion** — After presenting the screenshots, add a paragraph: did the swarm behave as expected? Did the gradient converge? Were there any failure modes observed? Even a qualitative statement counts.
+- [x] **Convert performance prose into a structured table** — Replace the scattered sentences about node counts and GPU requirements with a 2-column table (Hardware / Max nodes @ >30 FPS) for both minimal and rich environments.
+- [x] *(Optional, recommended)* **Move quantitative results to Ch.7** — The frame-rate/node-count performance data belongs alongside the FFI benchmark for a unified results chapter.
 
 ---
 
 ## Chapter 7 — Results
 
-- [ ] **Add framing sentence** — Open the chapter with: *"The central question is whether FFI communication can sustain the 20 Hz execution frequency required by aggregate computing at simulation scales relevant to CAS research."*
-- [ ] **Anchor numbers to table cells** — When citing 450× or 700× speedup, add a parenthetical reference to the specific row and column in Table 7.1 (e.g., *"…over 450 times slower (Table 7.1, mean, Overhead Collektive-side column)…"*).
-- [ ] **Justify the 12-node benchmark scope** — Add a sentence explaining why 12 nodes were used for the communication benchmark and whether the conclusions are expected to hold (or were separately verified) at 100 nodes.
-- [ ] **Explain the 1e8 ns axis label** — In the caption or body text for Fig. 7.2, state explicitly that the y-axis is in units of 10⁸ nanoseconds, i.e., ~100 ms per major gridline, to make the scale immediately interpretable.
+- [x] **Add framing sentence** — Open the chapter with: *"The central question is whether FFI communication can sustain the 20 Hz execution frequency required by aggregate computing at simulation scales relevant to CAS research."*
+- [x] **Anchor numbers to table cells** — When citing 450× or 700× speedup, add a parenthetical reference to the specific row and column in Table 7.1 (e.g., *"…over 450 times slower (Table 7.1, mean, Overhead Collektive-side column)…"*).
+- [x] **Justify the 12-node benchmark scope** — Add a sentence explaining why 12 nodes were used for the communication benchmark and whether the conclusions are expected to hold (or were separately verified) at 100 nodes.
+- [x] **Explain the 1e8 ns axis label** — In the caption or body text for Fig. 7.2, state explicitly that the y-axis is in units of 10⁸ nanoseconds, i.e., ~100 ms per major gridline, to make the scale immediately interpretable.
 
 ---
 
@@ -82,13 +82,9 @@
 
 ---
 
-## 🆕 Additional items not in the original TODO
+## 🆕 Additional items
 
 - [ ] **Add a glossary or notation table** (Appendix or §1) — Define: AC, CAS, FFI, IDL, JVM, UPM, KMP, P/Invoke, protobuf, SI. Many are introduced without definition and some acronyms are used before they are expanded.
-- [ ] **Verify all `[?]` / `[??]` references** — In §8.1 there is `[?]` (OpenUPM reference). Check the entire document for unresolved citation keys.
-- [ ] **Check figure numbering continuity** — Figures jump from 5.5 to 6.1; verify no figure is missing or out of order.
-- [ ] **Add a "Threats to Validity" paragraph in Ch.7 or Ch.8** — Benchmarks were run on a single machine; results may differ on ARM hardware or under different OS schedulers. This is standard practice for research theses.
 - [ ] **Proof-read citation formatting** — Some bibliography entries (e.g., `[Ent01]`) have incomplete metadata. Verify all entries are complete and consistent.
-- [ ] **Confirm abstract word/character count** — Once written, verify it does not exceed 2000 characters as specified by the university template.
 
 ---
