@@ -88,7 +88,7 @@ It is important to note that the \monospace{SensorData} and \monospace{ActuatorD
 
 The Core Bridge serves as the critical `glue code' that enables communication between the Collektive and Unity environments. As detailed in Section \ref{sec:archi}, it leverages an \ac{IDL} to marshal domain-specific data structures into low-level byte arrays. These are transferred via a \ac{FFI} to the opposing context, where they are reconstructed into native data structures.
 
-The \ac{IDL} selected for this implementation is Protocol Buffers. While FlatBuffers was initially considered for its superior `zero-copy' performance \cite{google_flatbuffers_2014}, it was ultimately discarded due to compatibility constraints with \ac{KMP} projects.
+The \ac{IDL} selected for this implementation is Protocol Buffers. While FlatBuffers was initially considered for its superior `zero-copy' performance \cite{google_flatbuffers_2014}, it was ultimately discarded due to its incompatibility with \ac{KMP} projects (strong requirement for this product).
 
 \paragraph{Protocol Buffers}
 As stated in the official documentation, Protocol Buffers provide a `language-neutral, platform-neutral, extensible mechanism for serializing structured data [...] You define how you want your data to be structured once, then you can use special generated source code to easily write and read your structured data' \cite{google_protobuf_2024}. This system utilizes a specialized compiler (\monospace{protoc}) that processes a \monospace{.proto} definition file to generate the required source code for each target environment (e.g., \monospace{.kt} for Kotlin and \monospace{.cs} for C\#).
@@ -273,11 +273,11 @@ The implementation leverages the Unity engine's \acp{API} to enforce instance un
 
 \subsection{Unity Editor Customization}
 
-The Unity environment offers a robust framework for extending the Editor's native capabilities through user-defined scripts. This project leverages this extensibility for two primary objectives:
+Two non-functional requirements drive the customisations described in this section: the need for a reproducible build process, which demands automation of repetitive compilation and configuration tasks; and the need for runtime observability, which requires backend state to be inspectable directly inside the Editor without risk of accidental modification. The Unity environment offers a robust framework for extending the Editor's native capabilities through user-defined scripts. This project leverages this extensibility for two primary objectives:
 
 \begin{itemize}
-\item the automation of repetitive build and configuration tasks;
-\item the enhancement of runtime observability and debugging.
+    \item the automation of repetitive build and configuration tasks;
+    \item the enhancement of runtime observability and debugging.
 \end{itemize}
 
 \paragraph{Workflow Automation}

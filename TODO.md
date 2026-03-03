@@ -51,9 +51,8 @@
 
 ## Chapter 5 — Implementation of Collektivity
 
-- [ ] **Reconcile Engine Facade and Network diagrams** — Fig. 5.1 and Fig. 5.2 are currently inconsistent (e.g., `Engine` appears in both but with different interfaces). Ensure the two UML diagrams share consistent type names and relationships.
-- [ ] **Expand FlatBuffers rejection rationale** — Currently dismissed in one sentence. Add 2–3 sentences explaining the specific KMP incompatibility encountered and why it was a hard blocker vs. a workaround.
-- [ ] **Add conjunction for §5.2.3 (Unity Editor Customization)** — This section feels detached. Open it with a sentence linking it to the reproducibility/observability non-functional requirements established in Ch.4 (e.g., *"Supporting the reproducibility requirement means exposing backend state directly in the Editor, which motivated the following customisations."*)
+- [x] **Expand FlatBuffers rejection rationale** — Currently dismissed in one sentence. Add 2–3 sentences explaining the specific KMP incompatibility encountered and why it was a hard blocker vs. a workaround.
+- [x] **Add conjunction for §5.2.3 (Unity Editor Customization)** — This section feels detached. Open it with a sentence linking it to the reproducibility/observability non-functional requirements established in Ch.4 (e.g., *"Supporting the reproducibility requirement means exposing backend state directly in the Editor, which motivated the following customisations."*)
 
 ---
 
