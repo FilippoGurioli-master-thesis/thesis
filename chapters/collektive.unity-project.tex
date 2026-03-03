@@ -35,36 +35,35 @@ Requirements are split into separated categories.
 
 \subsection{Domain Requirements}
 
-\subsubsection{Simulator Domain}
+\subsubsection{Simulation Behaviour Domain}
 
 \begin{itemize}
-	\item The simulator should have customizable node sensors.
-	\item The simulator should have customizable node actuators.
-	\item The simulator should have customizable step duration (i.e.\ \textit{delta time}).
-	\item The simulator should be able to pause the simulation.
-	\item The simulator should have centralized handling of randomization to enable reproducibility.
-	\item The simulator should support dynamic addition and removal of nodes.
-	\item The simulator should allow nodes to interact with at least the following Unity components:
-	      \begin{itemize}
-		      \item rigid body
-		      \item collider
-	      \end{itemize}
-	\item The simulator should support dynamic addition and removal of neighbors.
-	\item The simulator should support any kind of neighborhood discovery.
+    \item The simulator should have customizable node sensors.
+    \item The simulator should have customizable node actuators.
+    \item The simulator should have customizable step duration (i.e.\emph{delta time}).
+    \item The simulator should be able to pause the simulation.
+    \item The simulator should have centralized handling of randomization to enable reproducibility.
+    \item The simulator should support dynamic addition and removal of nodes.
+    \item The simulator should allow nodes to interact with at least the following Unity components:
+          \begin{itemize}
+              \item rigid body
+              \item collider
+          \end{itemize}
+    \item The simulator should support dynamic addition and removal of neighbors.
+    \item The simulator should support any kind of neighborhood discovery.
+    \item The integration should follow a reactive pattern: Collektive reacts to stimuli produced by the Unity environment, not the other way around.
+    \item The data exchanged across the bridge should be agnostic of the underlying case study, so that the integration core requires no modification when the collective program changes.
 \end{itemize}
 
-\subsubsection{Communication Domain}
-
+\subsubsection{Communication Technology Domain}
 \begin{itemize}
-	\item The communication should follow the reactive pattern (i.e.\ Collektive reacts to Unity's stimuli).
-	\item The data exchanged should be agnostic from the underlying case study.
-	\item Performance should be the driver for choosing the right technology.
+    \item Performance shall be the primary driver for selecting the inter-process or inter-language communication technology. Latency introduced by the bridge must not prevent the simulation from sustaining the target execution frequency.
+    \item The system should evaluate and compare candidate communication strategies (e.g.\ socket-based \ac{IPC} versus \ac{FFI}) before committing to an implementation, and the choice must be justified empirically.
 \end{itemize}
 
 \subsubsection{Research Domain}
-
 \begin{itemize}
-	\item The system should prove the feasibility of integrating game engines within \ac{CAS} frameworks.
+    \item The system should prove the feasibility of integrating game engines within \ac{CAS} frameworks as high-fidelity simulation platforms for aggregate programming.
 \end{itemize}
 
 \subsection{Functional Requirements}
@@ -118,10 +117,10 @@ Before detailing the individual components, it is necessary to outline the core 
 \paragraph{From Application to Package} \label{par:archi-app2package}
 The architectural design of this bridge was shaped by a shift in how the simulation environment is hosted. Early design iterations focused on developing a standalone simulation application. However, this approach led to a redundant replication of complex features already native to the Unity Editor, such as spatial partitioning, inspector-based configuration, and asset management.
 
-To resolve this, the architecture was refactored into a Unity Package—directly leveraging the Unity Package Template developed as the first deliverable of this thesis (Chapter~\ref{chap:unity_package_template})—rather than remaining a monolithic application. This shift treats the Unity Editor as the primary configuration interface rather than a mere rendering target. By distributing the backend and bridge as a modular library, the user can utilize Unity's native tooling to define simulation parameters, modify environment geometry, and inspect node states in real-time. Consequently, the project functions as an extensible framework that transforms any standard Unity project into a specialized \ac{CAS} simulator.
+To resolve this, the architecture was refactored into a Unity Package directly leveraging the Unity Package Template developed as the first deliverable of this thesis (Chapter~\ref{chap:unity_package_template}), rather than remaining a monolithic application. This shift treats the Unity Editor as the primary configuration interface rather than a mere rendering target. By distributing the backend and bridge as a modular library, the user can utilize Unity's native tooling to define simulation parameters, modify environment geometry, and inspect node states in real-time. Consequently, the project functions as an extensible framework that transforms any standard Unity project into a specialized \ac{CAS} simulator.
 
 \paragraph{Delegated Neighborhood Discovery}
-A critical architectural decision was the delegation of spatial logic to the Unity environment. In \ac{AC}, determining network topology is fundamental. If this logic were handled in the Kotlin backend, every simulation tick would require an $O(n^2)$ complexity check to evaluate node proximity.
+A critical architectural decision was the delegation of spatial logic to the Unity environment. In \ac{AC}, determining network topology is fundamental. If this logic were handled in the Kotlin backend, every simulation tick would require an $O(n^2)$ complexity check to evaluate node proximity: with $n$ nodes, naively testing every pair for adjacency produces $\frac{n(n-1)}{2}$ distance comparisons per round, which becomes prohibitive as the population grows. By delegating neighborhood discovery to Unity instead, the system exploits the engine's pre-baked spatial partitioning structures, such as octrees and grid hierarchies, which reduce proximity queries to $O(n \log n)$ or better, keeping the Kotlin backend a pure logic engine that receives a pre-calculated adjacency list.
 
 By moving discovery to Unity, the system exploits the engine's highly optimized physics engine and pre-baked spatial partitioning (e.g., grids or Octrees). This allows for efficient neighborhood calculations using native features like Colliders or Raycasting, ensuring the backend remains a pure logic engine that receives a pre-calculated adjacency list.
 

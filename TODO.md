@@ -1,6 +1,5 @@
 # TODO
 
-
 ## 🔴 Blockers (must be done before submission)
 
 - [x] **Write Abstract** — max 2000 characters. Should cover: problem (reality gap), method (Collektive + Unity via FFI), contribution (Collektivity toolchain + Unity Package Template), key result (FFI is ~450× faster than sockets, 100-node real-time simulation achieved).
@@ -22,37 +21,31 @@
 
 ## Chapter 1 — Introduction
 
-- [ ] **Add "reality gap spectrum" figure** — A horizontal diagram showing a spectrum from *abstract simulators* (NetLogo, Alchemist) on the left to *physical hardware* on the right, with Collektivity positioned in the middle. Add a label/caption and a forward reference to it from the introduction text.
+- [x] **Add "reality gap spectrum" figure** — A horizontal diagram showing a spectrum from *abstract simulators* (NetLogo, Alchemist) on the left to *physical hardware* on the right, with Collektivity positioned in the middle. Add a label/caption and a forward reference to it from the introduction text.
 
 ---
 
 ## Chapter 2 — Background and State of the Art
 
-- [ ] **Fix typos** — Perform a careful proof-read pass (specific typos were flagged by supervisor but not itemised here; check with supervisor for the annotated copy).
-- [ ] **Shrink §2.1.1 and §2.1.2 by ~30%** — Consider merging them into a single subsection *"Distributed Systems Goals and Kinds"* with condensed prose; the detail level exceeds what is needed as background for a simulator thesis.
-- [ ] **Improve conjunction in §2.3.1** — The transition from formal field calculus theory to practical tooling (ScaFi, Collektive) feels abrupt. Add 1–2 sentences explaining how the formal layer enables tool correctness guarantees.
-- [ ] **Add citation for Alchemist + agent embodiment** — The sentence *"yet it typically operates with a simplified notion of agent embodiment"* needs a supporting citation.
-- [ ] **Rework §2.5 closing** — The section currently ends in a conclusive/summary tone that belongs in a Conclusions chapter. Rewrite the final paragraph to transition forward into Ch.3, not backward.
-- [ ] **Add figure: AC layered architecture** — Diagram showing the stack: *Field Calculus → GCT Library → DSL Tooling (ScaFi / Collektive) → Execution Platform (Alchemist / Collektivity)*. Add forward reference in §2.3.3.
-- [ ] **Add simulator comparison table** — Columns: Simulator, Scalability, Realism, Physics Fidelity, 3D Support. Rows: NetLogo, Alchemist, ARGoS, Gazebo, Unity/Collektivity. Position it in §2.4 or §2.5.
-- [ ] **Add figure: sense-compute-act loop** — A cycle diagram showing the three phases of the local execution loop (§2.3.2). Referenced from the text.
+- [x] **Shrink §2.1.1 and §2.1.2 by ~30%** — Consider merging them into a single subsection *"Distributed Systems Goals and Kinds"* with condensed prose; the detail level exceeds what is needed as background for a simulator thesis.
+- [x] **Add citation for Alchemist + agent embodiment** — The sentence *"yet it typically operates with a simplified notion of agent embodiment"* needs a supporting citation.
+- [x] **Add figure: AC layered architecture** — Diagram showing the stack: *Field Calculus → GCT Library → DSL Tooling (ScaFi / Collektive) → Execution Platform (Alchemist / Collektivity)*. Add forward reference in §2.3.3.
+- [x] **Add figure: sense-compute-act loop** — A cycle diagram showing the three phases of the local execution loop (§2.3.2). Referenced from the text.
 
 ---
 
 ## Chapter 3 — Unity Package Template
 
-- [ ] **Rephrase opening sentence** — Replace current opener with: *"Building reliable research software on Unity requires overcoming its project-centric defaults. This chapter describes the automated development infrastructure created to address that challenge."*
-- [ ] **Add closing summary paragraph** — Explicitly map each tool/feature to the requirement it satisfies (e.g., Husky → deterministic versioning requirement; SonarQube → Clean Code quality gate requirement; Renovate → dependency drift requirement).
-- [ ] **Add repository structure diagram** — A visual representation of the top-level directory layout (complement or replace the code listing in Fig. 3.1 with a cleaner diagram).
-- [ ] **Add Sandbox pattern directory diagram** — Show the inner structure of the Sandbox subdirectory and how `manifest.json` links to the outer Unity-Package directory.
-- [ ] **Add CI/CD pipeline diagram** — A flowchart of the GitHub Actions pipeline showing: commit → Husky hooks → CI matrix build → SonarQube gate → semantic-release → GPG-signed artifact.
+- [x] **Rephrase opening sentence** — Replace current opener with: *"Building reliable research software on Unity requires overcoming its project-centric defaults. This chapter describes the automated development infrastructure created to address that challenge."*
+- [x] **Add repository structure diagram** — A visual representation of the top-level directory layout (complement or replace the code listing in Fig. 3.1 with a cleaner diagram).
+- [x] **Add Sandbox pattern directory diagram** — Show the inner structure of the Sandbox subdirectory and how `manifest.json` links to the outer Unity-Package directory.
 
 ---
 
 ## Chapter 4 — Collektivity Architecture
 
-- [ ] **Split requirements §4.3** — Currently §4.3.2 mixes simulation-behaviour concerns with communication-technology concerns. Create separate subsections: *"Simulation Domain Requirements"* and *"Communication Domain Requirements"*.
-- [ ] **Add citation for O(n²) complexity claim** — The claim that performing neighborhood discovery in Kotlin would require O(n²) checks needs a reference or at minimum a parenthetical justification in §4.4.1.
+- [x] **Split requirements §4.3** — Currently §4.3.2 mixes simulation-behaviour concerns with communication-technology concerns. Create separate subsections: *"Simulation Domain Requirements"* and *"Communication Domain Requirements"*.
+- [x] **Add citation for O(n²) complexity claim** — The claim that performing neighborhood discovery in Kotlin would require O(n²) checks needs a reference or at minimum a parenthetical justification in §4.4.1.
 
 ---
 
@@ -100,20 +93,3 @@
 - [ ] **Confirm abstract word/character count** — Once written, verify it does not exceed 2000 characters as specified by the university template.
 
 ---
-
-## Summary Checklist
-
-| Area | Total items | Done |
-|---|---|---|
-| Blockers | 3 | 0 |
-| General / Cross-cutting | 3 | 0 |
-| Chapter 1 | 4 | 0 |
-| Chapter 2 | 8 | 0 |
-| Chapter 3 | 5 | 0 |
-| Chapter 4 | 2 | 0 |
-| Chapter 5 | 3 | 0 |
-| Chapter 6 | 4 | 0 |
-| Chapter 7 | 4 | 0 |
-| Chapter 8 | 3 | 0 |
-| New / Additional | 6 | 0 |
-| **Total** | **45** | **0** |
