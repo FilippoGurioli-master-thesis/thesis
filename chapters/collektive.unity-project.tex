@@ -1,36 +1,22 @@
 \chapter{Collektivity: Designing a 3D Simulator for Collective Systems} \label{chap:collektivity}
 
-This chapter faces the core research project produced for this thesis: a simulator for 3D \ac{CAS}.
+This chapter presents the core research project produced for this thesis: a simulator for 3D \ac{CAS}, built as a bridge between the Unity game engine and the Collektive aggregate programming library.
 
-TODO ------------------------------------------------------------------------
+\section{Problem Statement}
 
-\subsection{Unity: Architecture and Core Concepts}
+Validating \ac{CAS} behavior in a realistic 3D environment requires a platform that can simultaneously model embodied agent dynamics—rigid-body physics, collision geometry, spatial proximity—and expose them to an aggregate programming runtime capable of expressing collective logic. Classic simulators tend to abstract away this physical layer, operating on simplified grids or meta-data representations that do not capture the \textit{reality gap} encountered when deploying systems in the physical world.
 
-The project developed in this thesis is built on Unity, a game engine created by Unity Technologies that is widely utilized in both industrial and academic contexts. Unity adopts a GameObject–Component architectural model, in which every entity within a scene is represented as a container object to which modular functional components are attached. This paradigm naturally lends itself to the modeling of collective systems, as each agent can be represented as a GameObject equipped with components that implement perception, communication and decision-making logic.
+The convergence of game engines and macro-programming models offers a concrete path forward. In such an architecture, a game engine serves as the high-fidelity environment layer: it supplies realistic geometry, motion, and sensor/actuation interfaces for embodied agents. The aggregate programming runtime, in turn, operates at a higher level of abstraction, orchestrating neighborhood interactions, asynchronous distributed rounds, and the evolution of computational fields. The bridge between these two layers is a well-defined interface responsible for three critical functions: \textit{sensing} (transforming engine-level data into field inputs), \textit{actuation} (translating field outputs into engine-level commands), and \textit{neighborhood exchange} (using the engine's spatial queries to determine communication topology).
 
-Within this framework, several fundamental concepts define the simulation structure. Scenes act as hierarchical containers that organize the environment, while Prefabs allow for the creation of reusable templates for agents. The behavior of these entities is governed by lifecycle methods, such as \monospace{Update()} and \monospace{FixedUpdate()}, which ensure that time-dependent behaviors remain consistent with the engine's update cycle~\cite{unity_manual}. Physical interaction is managed by an integrated 3D physics system based on the NVIDIA PhysX SDK. This engine provides a scalable framework for modeling actors and managing both direct and proximity-based interactions, allowing for the simulation of realistic physical behaviors and dynamic effects~\cite{unity_physics}.
+\subsection{Unity as the Environment Layer}
 
-\subsection{Unity as a Platform for \aclp{CAS}}
+Unity~\cite{unity_manual} is the game engine chosen for this study. It adopts a GameObject–Component architectural model in which every entity in a scene is represented as a container object to which modular functional components are attached. This paradigm lends itself naturally to agent-based modeling: each agent can be represented as a GameObject equipped with components that implement perception, communication, and decision-making logic. Time-dependent behaviors are governed by lifecycle methods such as \monospace{Update()} and \monospace{FixedUpdate()}, which keep simulation steps consistent with the engine's update cycle. Physical interaction is managed by an integrated 3D physics engine based on the NVIDIA PhysX SDK~\cite{unity_physics}, which provides scalable collision detection and dynamic proximity queries.
 
-The decision to adopt Unity as the platform for this study is driven by its effective balance between simulation fidelity, architectural flexibility, and development speed. Unlike higher-fidelity engines that may impose significant tooling overhead, Unity provides a streamlined workflow for agent-based modeling and accurate spatial constraints. For \ac{AC}, Unity is particularly attractive as a high-fidelity environment layer; it provides the realistic geometry and sensor interfaces while the aggregate runtime handles the collective logic and neighbor interactions.
-
-This separation of concerns allows the engine to handle embodied dynamics and scene management, while the aggregate platform manages the `computational field' through a well-defined interface. By utilizing Unity, this study leverages advanced visual debugging and automated testing workflows, ensuring that the self-organizing behaviors observed in simulation are grounded in an environment that closely approximates the complexity of physical reality.
-
-\section{Implications for \acl{AC} Simulations}
-
-The convergence of game engines and macro-programming models offers an architecture for the development and validation of \acp{CAS}. In this integrated landscape, game engines serve primarily as a high-fidelity environment layer, providing the realistic geometry, motion, and sensor/actuation interfaces necessary for embodied agents. Meanwhile, the aggregate programming runtime remains responsible for the core collective logic, including neighborhood interactions, the execution of asynchronous distributed rounds, and the evolution of computational fields.
-
-This architectural separation suggests a pragmatic integration strategy that leverages the strengths of both paradigms. The engine is tasked with managing the `physical' presence of the agents—handling rigid-body dynamics, collision detection and the synthesis of raw sensor data from the virtual world. Conversely, the aggregate platform operates at a higher level of abstraction, orchestrating the global behavior of the swarm or network. The bridge between these two layers is a well-defined interface responsible for three critical functions: sensing (transforming engine-level data into field inputs), actuation (translating field outputs into engine-level movements), and neighborhood exchange (utilizing the engine’s spatial queries to determine communication topology).
-
-By delegating environmental complexity to a game engine like Unity, researchers can focus on the resilience and correctness of the collective logic while operating in a space that closely mimics the `reality gap' found in physical deployments. This approach moves beyond the simplified grid-based or meta-data abstractions of classic simulators, providing a robust pathway for the engineering of situated systems where physical constraints can measurably impact the emergent outcome. The feasibility and limitations of this coupled approach provide the direct motivation for the integration of an aggregate programming implementation within the Unity ecosystem, as explored in the following chapters of this study.
-
-TODO ------------------------------------------------------------------------
+The decision to adopt Unity is driven by its effective balance between simulation fidelity, architectural flexibility, and development speed. Unlike higher-fidelity engines that impose significant tooling overhead, Unity provides a streamlined workflow for spatial agent modeling while exposing the realistic geometry and sensor interfaces that \ac{AC} programs require. Crucially, its built-in spatial partitioning structures (e.g., Octrees and grid hierarchies) allow neighborhood queries to be evaluated in sublinear time directly within the engine, rather than pushing $O(n^2)$ proximity checks onto the aggregate runtime. By delegating environmental complexity to Unity, researchers can focus on the resilience and correctness of the collective logic while operating in a space that closely approximates the conditions of physical deployment.
 
 \section{Goal}
 
-The project goal is to bridge the Unity game engine with the \ac{AC} library named Collektive.
-
-This communication should be bidirectional, achieve high performance and enable huge customization.
+The goal of this project is to bridge the Unity game engine with the \ac{AC} library named Collektive, building on the Unity Package infrastructure developed as a prior deliverable of this thesis (Chapter~\ref{chap:unity_package_template}). This communication should be bidirectional, achieve high performance, and enable extensive customization of sensors, actuators, and collective programs without modifying the integration core.
 
 \section{Requirements}
 
@@ -44,7 +30,7 @@ Requirements are split into separated categories.
 	\item The integration must map the output of the Collektive aggregate program to Unity Actuators (e.g., changing position, color, or state of a GameObject).
 	\item The system shall evaluate and implement a low-latency communication or bridge mechanism to minimize overhead between the JVM-based Collektive and the C\#-based Unity environments.
 	\item The integration should allow Collektive nodes to perceive Unity's colliders, rigidbodies and spatial triggers as first-class citizens.
-	\item The integration layer should reamin agnostic to the specific \ac{CAS} case study.
+	\item The integration layer should remain agnostic to the specific \ac{CAS} case study.
 \end{itemize}
 
 \subsection{Domain Requirements}
@@ -54,23 +40,23 @@ Requirements are split into separated categories.
 \begin{itemize}
 	\item The simulator should have customizable node sensors.
 	\item The simulator should have customizable node actuators.
-	\item The simulator should have customizable step duration (i.e. \textit{delta time}).
+	\item The simulator should have customizable step duration (i.e.\ \textit{delta time}).
 	\item The simulator should be able to pause the simulation.
-	\item The simulator should have a centered handling of randomization to enable reproducibility.
-	\item The simulator should support addition and remotion of nodes in the simulation dynamically.
-	\item The simulator should allow nodes to interacts at least with the following unity components:
+	\item The simulator should have centralized handling of randomization to enable reproducibility.
+	\item The simulator should support dynamic addition and removal of nodes.
+	\item The simulator should allow nodes to interact with at least the following Unity components:
 	      \begin{itemize}
 		      \item rigid body
 		      \item collider
 	      \end{itemize}
-	\item The simulator should support addition and remotion of neighbors dynamically.
-	\item The simulator should support any kind of nighborhood discovery.
+	\item The simulator should support dynamic addition and removal of neighbors.
+	\item The simulator should support any kind of neighborhood discovery.
 \end{itemize}
 
 \subsubsection{Communication Domain}
 
 \begin{itemize}
-	\item The communication should follow the reactive pattern (i.e. Collektive reacts to Unity's stimuli).
+	\item The communication should follow the reactive pattern (i.e.\ Collektive reacts to Unity's stimuli).
 	\item The data exchanged should be agnostic from the underlying case study.
 	\item Performance should be the driver for choosing the right technology.
 \end{itemize}
@@ -78,7 +64,7 @@ Requirements are split into separated categories.
 \subsubsection{Research Domain}
 
 \begin{itemize}
-	\item The system should prove the feasability of integrating game engines within \ac{CAS} frameworks.
+	\item The system should prove the feasibility of integrating game engines within \ac{CAS} frameworks.
 \end{itemize}
 
 \subsection{Functional Requirements}
@@ -90,7 +76,7 @@ Requirements are split into separated categories.
 	\item The user should treat the Unity Editor as the simulator.
 	\item The user should be able to add and remove nodes from the environment.
 	\item The user should be able to create neighborhood discovery logic.
-	\item The user should be able to inject any kind of collektive program inside the simulation.
+	\item The user should be able to inject any kind of Collektive program inside the simulation.
 	\item The user should be able to attach many different sensors and actuators to the same node.
 	\item The user should be able to configure each node independently from the others.
 \end{itemize}
@@ -98,15 +84,15 @@ Requirements are split into separated categories.
 \subsubsection{System Functional Requirements}
 
 \begin{itemize}
-	\item The system should allow users to define custom sensors and acutators without modifying the core integration library.
-	\item The system should allow users to define custom Collektive program without modifying the core integration library.
+	\item The system should allow users to define custom sensors and actuators without modifying the core integration library.
+	\item The system should allow users to define custom Collektive programs without modifying the core integration library.
 \end{itemize}
 
 \subsection{Non-Functional Requirements}
 
 \begin{itemize}
-	\item The system should maintain stable frame rate ( > 30 FPS) with at least 100 active collektive nodes in a low budget laptop (ryzen 7 5700U, 16GB DDR4, integrated GPU).
-	\item The system should be implemented with the fastest technology found during exploration.
+	\item The system should maintain a stable frame rate ($> 30$ FPS) with at least 100 active Collektive nodes on a low-budget laptop (Ryzen 7 5700U, 16\,GB DDR4, integrated GPU).
+	\item The system should be implemented with the fastest communication technology identified during exploration.
 \end{itemize}
 
 \section{Architecture} \label{sec:archi}
@@ -127,12 +113,12 @@ The integration is designed as a modular bridge between Unity and Collektive, fa
 
 \subsection{Architecture Rationale}
 
-Before detailing the individual components, it is necessary to outline the core architecture decisions that ensure the system's scalability and flexibility.
+Before detailing the individual components, it is necessary to outline the core architectural decisions that ensure the system's scalability and flexibility.
 
 \paragraph{From Application to Package}
 The architectural design of this bridge was shaped by a shift in how the simulation environment is hosted. Early design iterations focused on developing a standalone simulation application. However, this approach led to a redundant replication of complex features already native to the Unity Editor, such as spatial partitioning, inspector-based configuration, and asset management.
 
-To resolve this, the architecture was refactored from a monolithic application into a Unity Package. This shift leverages the Unity Editor as the primary configuration interface rather than a mere rendering target. By distributing the backend and bridge as a modular library, the user can utilize Unity’s native tooling to define simulation parameters, modify environment geometry, and inspect node states in real-time. Consequently, the project functions as an extensible framework that transforms a standard Unity project into a specialized \ac{CAS} simulator.
+To resolve this, the architecture was refactored into a Unity Package—directly leveraging the Unity Package Template developed as the first deliverable of this thesis (Chapter~\ref{chap:unity_package_template})—rather than remaining a monolithic application. This shift treats the Unity Editor as the primary configuration interface rather than a mere rendering target. By distributing the backend and bridge as a modular library, the user can utilize Unity's native tooling to define simulation parameters, modify environment geometry, and inspect node states in real-time. Consequently, the project functions as an extensible framework that transforms any standard Unity project into a specialized \ac{CAS} simulator.
 
 \paragraph{Delegated Neighborhood Discovery}
 A critical architectural decision was the delegation of spatial logic to the Unity environment. In \ac{AC}, determining network topology is fundamental. If this logic were handled in the Kotlin backend, every simulation tick would require an $O(n^2)$ complexity check to evaluate node proximity.
@@ -145,35 +131,24 @@ The bridge architecture is decomposed into three distinct functional components 
 
 \subsubsection{Collektive Parser}
 
-To enable communication across a network or \ac{IPC} layer, the Collektive \ac{API} requires a robust serialization strategy. Two primary design choices were made to facilitate this:
+To enable communication across a network or \ac{IPC} layer, the Collektive \ac{API} requires a robust serialization strategy. Two primary design choices were made to facilitate this. First, since the simulation runs on a single machine, Collektive is configured as \monospace{InMemory} to minimize communication latency. Second, the generic identifier in Collektive has been reified to an integer to ensure predictable serialization.
 
-\begin{itemize}
-	\item the simulation runs on a single machine; thus, Collektive is configured as \monospace{InMemory} to minimize communication latency;
-	\item the generic identifier in Collektive has been reified to an integer to ensure predictable serialization.
-\end{itemize}
-
-The primary challenge lay in the program's input and output, which are both generics. While maintaining these as generics is essential for flexible collective behavior, it complicates data exchange. Rather than the brittle approach of manually replicating data structures and custom serializers on both sides of the bridge, this implementation adopts an \ac{IDL}. By utilizing an \ac{IDL}, the system decouples the data definition from the implementation language, allowing `a program or object written in one language [to] communicate with another program written in an unknown language' \cite{wiki_IDL}.
+The primary challenge lay in the program's input and output, which are both generics. While maintaining these as generics is essential for flexible collective behavior, it complicates data exchange. Rather than the brittle approach of manually replicating data structures and custom serializers on both sides of the bridge, this implementation adopts an \ac{IDL}. By utilizing an \ac{IDL}, the system decouples the data definition from the implementation language, allowing `a program or object written in one language [to] communicate with another program written in an unknown language'~\cite{wiki_IDL}.
 
 \subsubsection{Unity Parser}
 
-While the Collektive Parser handles the logic-side data mapping, the Unity Parser translates these definitions into the engine's entity-based structures. Unity operates on an \ac{ECS} inspired architecture, where the state of any object is defined by its collection of attached components. To bridge this with the \ac{AC} domain, the \textit{Unity Parser} is implemented as a specialized component responsible for bidirectional data translation.
+While the Collektive Parser handles the logic-side data mapping, the Unity Parser translates these definitions into the engine's entity-based structures. Unity operates on an \ac{ECS}-inspired architecture, where the state of any object is defined by its collection of attached components. To bridge this with the \ac{AC} domain, the \textit{Unity Parser} is implemented as a specialized component responsible for bidirectional data translation.
 
 At the scene level, a central \textit{Simulation Orchestrator} component serves as the gateway. This entity enhances a standard Unity scene into an active simulation environment by managing the communication channel's lifecycle. It interfaces directly with the \textit{Core Bridge}, utilizing the \ac{IDL} to serialize the environmental state and deserialize incoming commands from the Collektive back-end.
 
-For individual nodes, the parser abstracts Unity’s internal state into the language-agnostic format required by the aggregate program. The parser is responsible for neighborhood discovery. Rather than delegating spatial logic to the back-end, Unity identifies neighbors according to any arbitrary logic (e.g., physical proximity, line-of-sight or topological links) and provides them to the bridge as a collection of identifier pairs. This ensures the system remains agnostic to the specific neighboring criteria, allowing the user to implement any discovery logic within the Unity environment.
+For individual nodes, the parser abstracts Unity's internal state into the language-agnostic format required by the aggregate program. The parser is also responsible for neighborhood discovery. Rather than delegating spatial logic to the back-end, Unity identifies neighbors according to any arbitrary logic (e.g., physical proximity, line-of-sight, or topological links) and provides them to the bridge as a collection of identifier pairs. This ensures the system remains agnostic to the specific neighboring criteria, allowing the user to implement any discovery logic within the Unity environment.
 
 \subsubsection{Core Bridge}
 
 The Core Bridge represents the central link in the system, serving as the high-speed interface between the Unity C\# environment and the Collektive Kotlin/JVM runtime. To satisfy the strict non-functional requirement of maintaining high frame rates with over 100 active nodes, the bridge is implemented as a \ac{FFI} layer.
 
-The choice of \ac{FFI} over more traditional \ac{IPC} methods was driven by the need to minimize serialization overhead and context-switching latency. By exposing Collektive’s core logic as a native library, the bridge allows Unity to perform direct memory-to-memory communication. To ensure data consistency across the two environments, the bridge enforces a synchronous execution model. Each simulation `tick' triggers a blocking call: the Unity engine pauses its internal loop while the bridge marshals the data and waits for the Collektive engine to complete its computation round.
+The choice of \ac{FFI} over more traditional \ac{IPC} methods was driven by the need to minimize serialization overhead and context-switching latency. By exposing Collektive's core logic as a native library, the bridge allows Unity to perform direct memory-to-memory communication. To ensure data consistency across the two environments, the bridge enforces a synchronous execution model: each simulation tick triggers a blocking call in which the Unity engine pauses its internal loop while the bridge marshals the data and waits for the Collektive engine to complete its computation round.
 
-The Bridge's role is strictly defined by three mechanical operations:
-
-\begin{itemize}
-	\item Data marshalling: The process of transforming high-level language objects into a language-agnostic binary representation, as defined by the \ac{IDL} schema.
-	\item Function invocation: The execution of the foreign logic via the \ac{FFI}, passing pointers to the marshalled data buffers.
-	\item Data unmarshalling: The reconstruction of the binary data into the target language's native types, allowing the receiving environment to process the information.
-\end{itemize}
+The Bridge's role is strictly defined by three mechanical operations. \textit{Data marshalling} transforms high-level language objects into a language-agnostic binary representation, as defined by the \ac{IDL} schema. \textit{Function invocation} then executes the foreign logic via the \ac{FFI}, passing pointers to the marshalled data buffers. Finally, \textit{data unmarshalling} reconstructs the binary data into the target language's native types, allowing the receiving environment to process the information.
 
 A comprehensive performance comparison and a detailed evaluation of the trade-offs between \ac{FFI} and Socket-based communication are provided in Chapter~\ref{sec:comparison}.
