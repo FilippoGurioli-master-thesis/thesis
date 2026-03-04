@@ -43,7 +43,7 @@
 \DeclareAcronym{URL}{short=URL, long=Uniform Resource Locator}
 \DeclareAcronym{P/Invoke}{short=P/Invoke, long=Platform Invoke}
 \DeclareAcronym{HIL}{short=HIL, long=Hardware-in-the-Loop}
-\DeclareAcronym{CHAM}{short=CHAM, long=CHemical Abstract Machine}
+\DeclareAcronym{CHAM}{short=CHAM, long=Chemical Abstract Machine}
 \DeclareAcronym{APF}{short=APF, long=Artificial Potential Fields}
 \DeclareAcronym{XC}{short=XC, long=eXchange Calculus}
 \DeclareAcronym{ABMS}{short=ABMS, long=Agent-Based Modeling and Simulation}
@@ -82,7 +82,7 @@
 \frontmatter\frontispiece
 
 \begin{abstract}
-Modern computing increasingly relies on \ac{CAS} that is large ensembles of autonomous agents whose collective behavior emerges from local interactions. \ac{AC} provides a rigorous framework for programming such systems, yet validating \ac{AC} algorithms before physical deployment remains challenging. Classical simulators prioritize scalability but sacrifice physical realism, while high-fidelity robotic simulators are computationally expensive and poorly suited to \ac{AC} workflows. This mismatch, the reality gap, risks producing algorithms that succeed in simulation but fail in the field.
+Modern computing increasingly relies on \ac{CAS} (i.e. large ensembles of autonomous agents whose collective behavior emerges from local interactions). \ac{AC} provides a rigorous framework for programming such systems, yet validating \ac{AC} algorithms before physical deployment remains challenging. Classical simulators prioritize scalability but sacrifice physical realism, while high-fidelity robotic simulators are computationally expensive and poorly suited to \ac{AC} workflows. This mismatch, the reality gap, risks producing algorithms that succeed in simulation but fail in the field.
 
 This thesis presents Collektivity, a 3D simulator for \ac{CAS} that bridges the Unity game engine with Collektive, a Kotlin-based \ac{AC} library. Unity supplies realistic physics, collision detection and spatial partitioning, while Collektive handles aggregate logic. The two runtimes communicate through a \ac{FFI} layer with Protocol Buffers as the shared data model. To support Collektivity as a distributable library, a Unity Package Template was also developed, integrating continuous integration, automated semantic versioning, static analysis and artifact signing.
 
