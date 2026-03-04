@@ -259,13 +259,13 @@ Unity provides a robust asset system centered around \textit{Prefabs}, which wer
 
 Implementing traditional design patterns within the Unity ecosystem presents unique challenges. Because Unity utilizes a Component-Based Architecture rather than a strict object-oriented hierarchy, maintaining high-quality, decoupled code is not always intuitive. For this project, the \monospace{SimulationManager} and \monospace{LinkManager} were architected as Singletons to centralize simulation logic.
 
-In general software engineering, the Singleton pattern is intended to `ensure [classes] only have one instance, provide easy access to that instance, and control their instantiation' \cite{wiki_singleton_pattern}. However, in Unity, a script's lifecycle is inextricably linked to the \monospace{GameObject} to which it is attached. To reconcile the Singleton pattern with Unity’s scene-based execution, the \monospace{SingletonBehaviour} class was implemented, as illustrated in \cref{lst:singleton}.
+In general software engineering, the Singleton pattern is intended to ``ensure [classes] only have one instance, provide easy access to that instance and control their instantiation''' \cite{wiki_singleton_pattern}. However, in Unity, a script's lifecycle is inextricably linked to the GameObject to which it is attached. To reconcile the Singleton pattern with Unity’s scene-based execution, the \monospace{SingletonBehaviour} class was implemented, as illustrated in \cref{lst:singleton}.
 
 The implementation leverages the Unity engine's \acp{API} to enforce instance uniqueness across the execution lifecycle:
 
 \begin{itemize}
 \item the \monospace{Object.FindObjectOfType<T>} method is employed to query all active \monospace{MonoBehaviour} instances within the current scene hierarchy, returning the existing instance or \monospace{null} if none is present;
-\item the \monospace{AddComponent<T>} method is used to attach the component to a programmatically instantiated \monospace{GameObject} in the event that no prior instance is detected;
+\item the \monospace{AddComponent<T>} method is used to attach the component to a programmatically instantiated GameObject in the event that no prior instance is detected;
 \item the \monospace{DontDestroyOnLoad} method is invoked to ensure the persistence of the manager across scene transitions, preventing the engine from deallocating the object during level loads.
 \end{itemize}
 
